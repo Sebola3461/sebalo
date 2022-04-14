@@ -7,9 +7,9 @@ export default async (pm: PrivateMessage, args: string[], user: any) => {
 		} (${user.id})`
 	);
 
-	pm.user.sendMessage(`List of avaliable commands:
-	/np: Calculate the pp for the given map
-	!with <mods>: Calculate the map with given mods`);
+	pm.user.sendMessage(
+		`List of avaliable commands:\n/np: Calculate the pp for the given map\n!with <mods>: Calculate the map with given mods`
+	);
 
 	console.log(
 		`${new Date().toLocaleDateString("pt-BR")} | help sended for ${
