@@ -5,12 +5,16 @@ import calculateStandardBeatmap from "../performance/calculateStandardBeatmap";
 import calculateTaikoBeatmap from "../performance/calculateTaikoBeatmap";
 import calculateExtras, { calculateCTBExtras } from "./calculateExtras";
 import parseNPMods from "./parseNPMods";
+import * as database from "./../../database";
+import createNewUser from "../../database/utils/createNewUser";
 
-export default async (pm: PrivateMessage) => {
+export default async (pm: PrivateMessage, user: any) => {
+	const bancho_user = await pm.user.fetchFromAPI();
+
 	console.log(
 		`${new Date().toLocaleDateString("pt-BR")} | Calculating np for ${
-			pm.recipient.username
-		} (${pm.recipient.id})`
+			bancho_user.username
+		} (${bancho_user.id})`
 	);
 	let url = "";
 
@@ -33,6 +37,10 @@ export default async (pm: PrivateMessage) => {
 
 	if (beatmap.status != 200 || !beatmap.data)
 		return pm.user.sendMessage("Beatmap not found");
+
+	await database.users.findByIdAndUpdate(user.id, {
+		last_beatmap: beatmap_id,
+	});
 
 	const mods = parseNPMods(pm.content);
 
@@ -92,7 +100,7 @@ export default async (pm: PrivateMessage) => {
 
 	console.log(
 		`${new Date().toLocaleDateString("pt-BR")} | Np for ${
-			pm.recipient.username
-		} (${pm.recipient.id}) calculated!`
+			bancho_user.username
+		} (${bancho_user.id}) calculated!`
 	);
 };
