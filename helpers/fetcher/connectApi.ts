@@ -1,4 +1,6 @@
 import axios from "axios";
+import dotenv from "dotenv";
+dotenv.config();
 const osu_client_id = process.env.OSU_CLIENT_ID;
 const osu_client_secret = process.env.OSU_CLIENT_SECRET;
 
