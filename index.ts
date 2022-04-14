@@ -21,7 +21,7 @@ client.connect().then(() => {
 
 		let user = await database.users.findById(user_data.id);
 
-		if (user == null) user = await createNewUser(user);
+		if (user == null) user = await createNewUser(user_data);
 
 		commandHandler(pm, user);
 	});
