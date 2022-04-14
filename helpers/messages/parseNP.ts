@@ -93,7 +93,7 @@ export default async (pm: PrivateMessage, user: any) => {
 				} else {
 					const scores = ["1mi", "900k", "800k", "700k"];
 					pps = pps.concat(
-						`${scores[i]}: ${p.pp}pp ${i < 4 ? "•" : ""} `
+						`${scores[i]}: ${p.pp}pp ${i < 3 ? "•" : ""} `
 					);
 				}
 			}
