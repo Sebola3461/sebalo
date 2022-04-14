@@ -13,7 +13,7 @@ export default async (pm: PrivateMessage, user: any) => {
 	const requested_command = commands[args[0]];
 
 	if (!requested_command)
-		return pm.recipient.sendMessage(
+		return pm.user.sendMessage(
 			"Hm? Command not found! Use !help to see a list of avaliable commands."
 		);
 
@@ -22,6 +22,6 @@ export default async (pm: PrivateMessage, user: any) => {
 		args.shift();
 		requested_command(pm, args, user);
 	} catch (e) {
-		pm.recipient.sendMessage("Oh firetruck! An error has ocurred. Sorry");
+		pm.user.sendMessage("Oh firetruck! An error has ocurred. Sorry");
 	}
 };
