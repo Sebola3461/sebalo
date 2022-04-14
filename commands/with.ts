@@ -4,6 +4,7 @@ import calculateExtras, {
 	calculateCTBExtras,
 } from "../helpers/messages/calculateExtras";
 import calculateCatchBeatmap from "../helpers/performance/calculateCatchBeatmap";
+import calculateManiaBeatmap from "../helpers/performance/calculateManiaBeatmap";
 import calculateStandardBeatmap from "../helpers/performance/calculateStandardBeatmap";
 import calculateTaikoBeatmap from "../helpers/performance/calculateTaikoBeatmap";
 import * as database from "./../database";
@@ -34,8 +35,9 @@ export default async (pm: PrivateMessage, args: string[], user: any) => {
 	let performance: any[] = [];
 
 	let pps = "";
+	const map_mode = beatmap.data.mode ? beatmap.data.mode : "osu";
 
-	switch (beatmap.data.mode) {
+	switch (map_mode) {
 		case "osu": {
 			performance = await calculateStandardBeatmap(beatmap.data, mods);
 
@@ -57,12 +59,31 @@ export default async (pm: PrivateMessage, args: string[], user: any) => {
 
 			break;
 		}
+
+		case "mania": {
+			performance = await calculateManiaBeatmap(beatmap.data, mods);
+
+			calculatePerformance();
+
+			break;
+		}
 	}
 
 	function calculatePerformance() {
-		performance.forEach((p: { acc: number; pp: number }, i) => {
-			pps = pps.concat(`${p.acc}%: ${p.pp}pp ${i < 4 ? "•" : ""} `);
-		});
+		performance.forEach(
+			(p: { acc?: number; score?: number; pp: number }, i) => {
+				if (map_mode != "mania") {
+					pps = pps.concat(
+						`${p.acc}%: ${p.pp}pp ${i < 4 ? "•" : ""} `
+					);
+				} else {
+					const scores = ["1mi", "900k", "800k", "700k"];
+					pps = pps.concat(
+						`${scores[i]}: ${p.pp}pp ${i < 4 ? "•" : ""} `
+					);
+				}
+			}
+		);
 	}
 
 	let extras = "";
