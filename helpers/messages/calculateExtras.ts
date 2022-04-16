@@ -5,7 +5,7 @@ export default (att: StandardDifficultyAttributes) => {
 		1
 	)} AR: ${att.approachRate.toFixed(1)} Aim: ${att.aimStrain.toFixed(
 		2
-	)} Speed Strain: ${att.speedStrain.toFixed(2)}  |  `;
+	)} Stamina: ${att.speedStrain.toFixed(2)}  |  `;
 };
 
 export function calculateCTBExtras(od: number, ar: number) {
