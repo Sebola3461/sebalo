@@ -30,8 +30,6 @@ async function listen() {
 
 		process.env.OSU_API_ACCESS_TOKEN = tokens.access_token;
 
-		console.log(process.env.OSU_API_ACCESS_TOKEN);
-
 		console.log(
 			"getServerAuthToken",
 			"Server authorization token refreshed"

@@ -5,8 +5,6 @@ import dotenv from "dotenv";
 dotenv.config();
 
 export default async (pm: PrivateMessage, user: any) => {
-	console.log(pm.content);
-
 	if (pm.user.ircUsername == process.env.IRC_USERNAME) return;
 
 	if (
