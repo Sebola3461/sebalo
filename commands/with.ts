@@ -10,6 +10,8 @@ import calculateTaikoBeatmap from "../helpers/performance/calculateTaikoBeatmap"
 import * as database from "./../database";
 
 export default async (pm: PrivateMessage, args: string[], user: any) => {
+	if (user.username == process.env.IRC_USERNAME) return;
+
 	console.log(
 		`${new Date().toLocaleDateString("pt-BR")} | Calculating np !with for ${
 			user.username
@@ -24,6 +26,9 @@ export default async (pm: PrivateMessage, args: string[], user: any) => {
 		);
 
 	const user_data = await database.users.findById(user.id);
+
+	if (user_data.last_beatmap == "")
+		return pm.user.sendMessage("Use /np before use this command!");
 
 	const beatmap = await fetchBeatmap(user_data.last_beatmap);
 

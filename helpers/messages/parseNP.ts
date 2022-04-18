@@ -8,6 +8,7 @@ import parseNPMods from "./parseNPMods";
 import * as database from "./../../database";
 import createNewUser from "../../database/utils/createNewUser";
 import calculateManiaBeatmap from "../performance/calculateManiaBeatmap";
+import getBeatmapMessage from "./getBeatmapMessage";
 
 export default async (pm: PrivateMessage, user: any) => {
 	const bancho_user = await pm.user.fetchFromAPI();
@@ -36,8 +37,7 @@ export default async (pm: PrivateMessage, user: any) => {
 
 	const beatmap = await fetchBeatmap(beatmap_id);
 
-	if (beatmap.status != 200 || !beatmap.data)
-		return pm.user.sendMessage("Beatmap not found");
+	if (beatmap.status != 200) return pm.user.sendMessage("Beatmap not found");
 
 	await database.users.findByIdAndUpdate(user.id, {
 		last_beatmap: beatmap_id,
@@ -45,80 +45,11 @@ export default async (pm: PrivateMessage, user: any) => {
 
 	const mods = parseNPMods(pm.content);
 
-	let performance: any[] = [];
+	if (!beatmap.data) return pm.user.sendMessage("Beatmap not found");
 
-	let pps = "";
+	const message = await getBeatmapMessage(beatmap.data, mods);
 
-	const map_mode = beatmap.data.mode ? beatmap.data.mode : "osu";
-
-	switch (map_mode) {
-		case "osu": {
-			performance = await calculateStandardBeatmap(beatmap.data, mods);
-
-			calculatePerformance();
-			break;
-		}
-		case "taiko": {
-			performance = await calculateTaikoBeatmap(beatmap.data, mods);
-
-			calculatePerformance();
-
-			break;
-		}
-
-		case "fruits": {
-			performance = await calculateCatchBeatmap(beatmap.data, mods);
-
-			calculatePerformance();
-
-			break;
-		}
-
-		case "mania": {
-			performance = await calculateManiaBeatmap(beatmap.data, mods);
-
-			calculatePerformance();
-
-			break;
-		}
-	}
-
-	function calculatePerformance() {
-		performance.forEach(
-			(p: { acc?: number; score?: number; pp: number }, i) => {
-				if (map_mode != "mania") {
-					pps = pps.concat(
-						`${p.acc}%: ${p.pp}pp ${i < 4 ? "•" : ""} `
-					);
-				} else {
-					const scores = ["1mi", "900k", "800k", "700k"];
-					pps = pps.concat(
-						`${scores[i]}: ${p.pp}pp ${i < 3 ? "•" : ""} `
-					);
-				}
-			}
-		);
-	}
-
-	let extras = "";
-
-	if (beatmap.data.mode == "osu") {
-		extras = calculateExtras(performance[0].att);
-	}
-
-	if (beatmap.data.mode == "fruits") {
-		extras = calculateCTBExtras(beatmap.data.accuracy, beatmap.data.ar);
-	}
-
-	pm.user.sendMessage(
-		`${beatmap.data.beatmapset?.artist} - ${
-			beatmap.data.beatmapset?.title
-		} [${beatmap.data.version}] (${
-			mods == "NM"
-				? beatmap.data.difficulty_rating.toFixed(2)
-				: performance[0].att.starRating.toFixed(2)
-		}★${mods == "NM" ? "" : ` +${mods}`})  |  ${extras}${pps}`
-	);
+	pm.user.sendMessage(message);
 
 	console.log(
 		`${new Date().toLocaleDateString("pt-BR")} | Np for ${

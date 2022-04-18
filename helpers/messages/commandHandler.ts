@@ -1,12 +1,25 @@
 import { PrivateMessage } from "bancho.js";
 import commands from "../../commands";
 import parseNP from "./parseNP";
+import dotenv from "dotenv";
+dotenv.config();
 
 export default async (pm: PrivateMessage, user: any) => {
-	if (pm.content.includes("https://osu.ppy.sh/beatmapsets/"))
+
+	if (pm.self) return;
+
+	if (
+		pm.self ||
+		(pm.content.includes("https://osu.ppy.sh/beatmapsets/") &&
+			pm.user.ircUsername != process.env.IRC_USERNAME)
+	)
 		parseNP(pm, user);
 
-	if (!pm.content.startsWith("!")) return;
+	if (
+		!pm.content.startsWith("!") &&
+		pm.user.ircUsername != process.env.IRC_USERNAME
+	)
+		return;
 
 	const args = pm.content.slice(1).trim().split(" ");
 

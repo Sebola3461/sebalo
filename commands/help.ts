@@ -8,7 +8,7 @@ export default async (pm: PrivateMessage, args: string[], user: any) => {
 	);
 
 	pm.user.sendMessage(
-		`List of avaliable commands:\n/np: Calculate the pp for the given map\n!with <mods>: Calculate the map with given mods`
+		`Click [https://github.com/sebola3461/sebalo/wiki here] to see a list of avaliable commands`
 	);
 
 	console.log(

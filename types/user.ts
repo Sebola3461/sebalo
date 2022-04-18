@@ -1,6 +1,5 @@
 import type { Timestamp } from "./timestamp";
 import { GameMode, GameModeName } from "./game_mode";
-import { ColorResolvable } from "discord.js";
 import { Beatmapset } from "./beatmap";
 
 export interface UserCompactCover {
@@ -24,7 +23,7 @@ export interface ProfilePage {
 
 export interface UserResponse {
 	status: number;
-	data: User;
+	data?: User;
 }
 
 export interface UserStatisticsRulesets {
@@ -44,18 +43,6 @@ export interface UserGroup {
 	is_probationary: boolean;
 	name: string;
 	short_name: string;
-}
-
-export interface EmbededUserGroup {
-	colour: ColorResolvable;
-	icon: string;
-	has_listing?: boolean;
-	has_playmodes?: boolean;
-	id?: number;
-	identifier?: string;
-	is_probationary?: boolean;
-	name?: string;
-	short_name?: string;
 }
 
 export interface UserAccountHistory {

@@ -2,6 +2,7 @@ import { BanchoClient } from "bancho.js";
 import dotenv from "dotenv";
 import commandHandler from "./helpers/messages/commandHandler";
 dotenv.config();
+import { twitchClient } from "./twitch/client";
 import "./helpers/fetcher/connectApi";
 import createNewUser from "./database/utils/createNewUser";
 import * as database from "./database";
@@ -14,7 +15,9 @@ const client = new BanchoClient({
 });
 
 client.connect().then(() => {
-	console.log("Running.");
+	console.log("Bancho client running!");
+
+	twitchClient(client);
 
 	client.on("PM", async (pm) => {
 		const user_data = await pm.user.fetchFromAPI();
