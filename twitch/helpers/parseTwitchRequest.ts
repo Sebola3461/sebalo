@@ -58,11 +58,11 @@ export default async (
 		bancho
 			.getUser(user.data.username)
 			.sendMessage(
-				`${tags["display-name"]} ${
+				`${tags["display-name"]} ||  ${
 					beatmap.data.mode != "osu"
 						? `<osu!${beatmap.data.mode}>`
 						: ""
-				} || ${message}`
+				} ${message}`
 			);
 
 		return client.say(
@@ -110,9 +110,9 @@ export default async (
 		bancho
 			.getUser(user.data.username)
 			.sendMessage(
-				`${tags["display-name"]} ${
+				`${tags["display-name"]} ||  ${
 					beatmap.mode != "osu" ? `<osu!${beatmap.mode}>` : ""
-				} || ${message}`
+				} ${message}`
 			);
 
 		return client.say(
