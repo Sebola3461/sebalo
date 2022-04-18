@@ -4,6 +4,7 @@ import { users } from "../../database";
 import fetchBeatmap, {
 	fetchBeatmapset,
 } from "../../helpers/fetcher/fetchBeatmap";
+import fetchUser from "../../helpers/fetcher/fetchUser";
 import getBeatmapMessage from "../../helpers/messages/getBeatmapMessage";
 
 export default async (
@@ -44,9 +45,19 @@ export default async (
 			(u) => u.twitch.channel == channel.slice(1)
 		)[0];
 
-		return bancho
-			.getUser(db_channel.id)
+		const user = await fetchUser(db_channel.id);
+
+		if (!user.data) return;
+
+		await users.findByIdAndUpdate(user.data.id, {
+			last_beatmap: beatmap.data.id,
+		});
+
+		bancho
+			.getUser(user.data.username)
 			.sendMessage(`${tags["display-name"]} || ${message}`);
+
+		return client.say(channel, `@${tags["display-name"]}: Request sended!`);
 	} else if (url.split("/").length == 5) {
 		beatmap_id = beatmap_id.split("#")[0];
 
@@ -69,8 +80,16 @@ export default async (
 			(u) => u.twitch.channel == channel.slice(1)
 		)[0];
 
+		const user = await fetchUser(db_channel.id);
+
+		if (!user.data) return;
+
+		await users.findByIdAndUpdate(user.data.id, {
+			last_beatmap: beatmap.id,
+		});
+
 		bancho
-			.getUser(db_channel.id)
+			.getUser(user.data.username)
 			.sendMessage(`${tags["display-name"]} || ${message}`);
 
 		return client.say(channel, `@${tags["display-name"]}: Request sended!`);

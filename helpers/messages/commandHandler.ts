@@ -5,13 +5,13 @@ import dotenv from "dotenv";
 dotenv.config();
 
 export default async (pm: PrivateMessage, user: any) => {
+	console.log(pm.content);
 
-	if (pm.self) return;
+	if (pm.user.ircUsername == process.env.IRC_USERNAME) return;
 
 	if (
-		pm.self ||
-		(pm.content.includes("https://osu.ppy.sh/beatmapsets/") &&
-			pm.user.ircUsername != process.env.IRC_USERNAME)
+		pm.content.includes("https://osu.ppy.sh/beatmapsets/") &&
+		pm.user.ircUsername != process.env.IRC_USERNAME
 	)
 		parseNP(pm, user);
 
@@ -36,5 +36,6 @@ export default async (pm: PrivateMessage, user: any) => {
 		requested_command(pm, args, user);
 	} catch (e) {
 		pm.user.sendMessage("Oh firetruck! An error has ocurred. Sorry");
+		console.log(e);
 	}
 };
