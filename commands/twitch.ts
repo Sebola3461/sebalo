@@ -11,7 +11,7 @@ export default async (pm: PrivateMessage, args: string[], user: any) => {
 	switch (args[0]) {
 		case "link": {
 			pm.user.sendMessage(
-				`Click [https://osu.ppy.sh/oauth/authorize?response_type=code&redirect_uri=https://sebola-twitch-authorization.herokuapp.com/twitch&client_id=14230 here] to enable twitch beatmap requests`
+				`Click [https://osu.ppy.sh/oauth/authorize?response_type=code&redirect_uri=https://sebola-twitch-authorization.herokuapp.com/osu&client_id=14230 here] to enable twitch beatmap requests`
 			);
 
 			break;
