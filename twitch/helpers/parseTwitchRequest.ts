@@ -74,6 +74,8 @@ export default async (
 		const beatmap =
 			beatmapset.data.beatmaps[beatmapset.data.beatmaps.length - 1];
 
+		beatmap.beatmapset = beatmapset.data;
+
 		const message = await getBeatmapMessage(beatmap, "NM", true);
 
 		const db_channel = (await users.find()).filter(
@@ -92,6 +94,13 @@ export default async (
 			.getUser(user.data.username)
 			.sendMessage(`${tags["display-name"]} || ${message}`);
 
-		return client.say(channel, `@${tags["display-name"]}: Request sended!`);
+		return client.say(
+			channel,
+			`@${tags["display-name"]}: ${beatmap.beatmapset.artist} - ${
+				beatmap.beatmapset.title
+			} [${beatmap.version}] (${beatmap.difficulty_rating.toFixed(2)}★) ${
+				beatmap.mode != "osu" ? `<osu!${beatmap.mode}>` : ""
+			}`
+		);
 	}
 };
