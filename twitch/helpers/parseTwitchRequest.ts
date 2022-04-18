@@ -49,6 +49,8 @@ export default async (
 
 		if (!user.data) return;
 
+		if (!beatmap.data.beatmapset) return;
+
 		await users.findByIdAndUpdate(user.data.id, {
 			last_beatmap: beatmap.data.id,
 		});
@@ -57,7 +59,16 @@ export default async (
 			.getUser(user.data.username)
 			.sendMessage(`${tags["display-name"]} || ${message}`);
 
-		return client.say(channel, `@${tags["display-name"]}: Request sended!`);
+		return client.say(
+			channel,
+			`@${tags["display-name"]}: Request sended! -> ${
+				beatmap.data.beatmapset.artist
+			} - ${beatmap.data.beatmapset.title} [${
+				beatmap.data.version
+			}] (${beatmap.data.difficulty_rating.toFixed(2)}★) ${
+				beatmap.data.mode != "osu" ? `<osu!${beatmap.data.mode}>` : ""
+			}`
+		);
 	} else if (url.split("/").length == 5) {
 		beatmap_id = beatmap_id.split("#")[0];
 
@@ -96,9 +107,11 @@ export default async (
 
 		return client.say(
 			channel,
-			`@${tags["display-name"]}: ${beatmap.beatmapset.artist} - ${
-				beatmap.beatmapset.title
-			} [${beatmap.version}] (${beatmap.difficulty_rating.toFixed(2)}★) ${
+			`@${tags["display-name"]}: Request sended! -> ${
+				beatmap.beatmapset.artist
+			} - ${beatmap.beatmapset.title} [${
+				beatmap.version
+			}] (${beatmap.difficulty_rating.toFixed(2)}★) ${
 				beatmap.mode != "osu" ? `<osu!${beatmap.mode}>` : ""
 			}`
 		);
