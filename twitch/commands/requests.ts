@@ -66,7 +66,7 @@ export default (
 
 			break;
 		}
-		case "setconfirm": {
+		case "setmessage": {
 			if (tags.username == channel.slice(1)) {
 				return setmessage(message, tags, channel, bancho, client, args);
 			} else if (tags.mod) {
