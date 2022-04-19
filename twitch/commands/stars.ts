@@ -3,6 +3,7 @@ import { ChatUserstate, Client } from "tmi.js";
 import pause from "./subcommands/requests/pause";
 import resume from "./subcommands/requests/resume";
 import setmax from "./subcommands/stars/setmax";
+import setmessage from "./subcommands/stars/setmessage";
 import setmin from "./subcommands/stars/setmin";
 
 export default (
@@ -54,10 +55,30 @@ export default (
 
 			break;
 		}
+		case "setmessage": {
+			if (tags.username == channel.slice(1)) {
+				setmessage(message, tags, channel, bancho, client, args);
+
+				break;
+			} else if (tags.mod) {
+				setmessage(message, tags, channel, bancho, client, args);
+
+				break;
+			} else {
+				client.say(
+					channel,
+					`@${tags["display-name"]}: Invalid permissions.`
+				);
+
+				break;
+			}
+
+			break;
+		}
 		default: {
 			client.say(
 				channel,
-				`@${tags["display-name"]}: Need help? Use "!stars setmin" to set a minimum star rating value and "!requests setmax" to set a max star rating.`
+				`@${tags["display-name"]}: Need help? Use "!stars setmessage" to set the error message, "!stars setmin" to set a minimum star rating value and "!stars setmax" to set a max star rating.`
 			);
 
 			break;
