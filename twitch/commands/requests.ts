@@ -1,11 +1,13 @@
 import { BanchoClient } from "bancho.js";
 import { ChatUserstate, Client } from "tmi.js";
+import modemsg from "./subcommands/requests/modemsg";
 import pause from "./subcommands/requests/pause";
 import resume from "./subcommands/requests/resume";
 import setconfirm from "./subcommands/requests/setconfirm";
 import setmessage from "./subcommands/requests/setmessage";
 import setmodes from "./subcommands/requests/setmodes";
 import setstatus from "./subcommands/requests/setstatus";
+import statusmsg from "./subcommands/requests/statusmsg";
 
 export default (
 	message: string,
@@ -106,10 +108,38 @@ export default (
 
 			break;
 		}
+		case "modemsg": {
+			if (tags.username == channel.slice(1)) {
+				return modemsg(message, tags, channel, bancho, client, args);
+			} else if (tags.mod) {
+				return modemsg(message, tags, channel, bancho, client, args);
+			} else {
+				return client.say(
+					channel,
+					`@${tags["display-name"]}: Invalid permissions.`
+				);
+			}
+
+			break;
+		}
+		case "statusmsg": {
+			if (tags.username == channel.slice(1)) {
+				return statusmsg(message, tags, channel, bancho, client, args);
+			} else if (tags.mod) {
+				return statusmsg(message, tags, channel, bancho, client, args);
+			} else {
+				return client.say(
+					channel,
+					`@${tags["display-name"]}: Invalid permissions.`
+				);
+			}
+
+			break;
+		}
 		default: {
 			client.say(
 				channel,
-				`@${tags["display-name"]}: Need help? Use "!requests pause" to pause requests, "!requests setconfirm" to set request sent confirmation message, "!requests setsr" to set sr error mesage, "!requests setmodes", "!requests setstatus" to set allowed beatmap status and "!requests setmessage" to set the ingame message.`
+				`@${tags["display-name"]}: Need help? Follow this link: https://github.com/Sebola3461/sebalo/wiki/Requests-Configuration`
 			);
 
 			break;

@@ -78,7 +78,7 @@ export default (
 		default: {
 			client.say(
 				channel,
-				`@${tags["display-name"]}: Need help? Use "!stars setmessage" to set the error message, "!stars setmin" to set a minimum star rating value and "!stars setmax" to set a max star rating.`
+				`@${tags["display-name"]}: Need help? Follow this link: https://github.com/Sebola3461/sebalo/wiki/Request-Star-Rating-Configuration`
 			);
 
 			break;
