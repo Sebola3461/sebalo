@@ -4,6 +4,7 @@ dotenv.config();
 import getChannels from "./helpers/getChannels";
 import { BanchoClient } from "bancho.js";
 import parseTwitchRequest from "./helpers/parseTwitchRequest";
+import commandHandler from "./helpers/commandHandler";
 
 export async function twitchClient(bancho: BanchoClient) {
 	try {
@@ -34,8 +35,20 @@ export async function twitchClient(bancho: BanchoClient) {
 		console.log("Twitch client running!");
 
 		client.on("message", (channel, tags, message, self) => {
-			if (message.includes("https://osu.ppy.sh/"))
-				parseTwitchRequest(message, tags, channel, bancho, client);
+			if (
+				message.includes("https://osu.ppy.sh/") &&
+				!message.includes("/discussion")
+			)
+				return parseTwitchRequest(
+					message,
+					tags,
+					channel,
+					bancho,
+					client
+				);
+
+			if (message.startsWith("!"))
+				commandHandler(message, tags, channel, bancho, client);
 		});
 	} catch (e) {
 		console.error(e);
