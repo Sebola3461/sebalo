@@ -4,6 +4,7 @@ import pause from "./subcommands/requests/pause";
 import resume from "./subcommands/requests/resume";
 import setconfirm from "./subcommands/requests/setconfirm";
 import setmessage from "./subcommands/requests/setmessage";
+import setmodes from "./subcommands/requests/setmodes";
 
 export default (
 	message: string,
@@ -76,10 +77,24 @@ export default (
 
 			break;
 		}
+		case "setmodes": {
+			if (tags.username == channel.slice(1)) {
+				return setmodes(message, tags, channel, bancho, client, args);
+			} else if (tags.mod) {
+				return setmodes(message, tags, channel, bancho, client, args);
+			} else {
+				return client.say(
+					channel,
+					`@${tags["display-name"]}: Invalid permissions.`
+				);
+			}
+
+			break;
+		}
 		default: {
 			client.say(
 				channel,
-				`@${tags["display-name"]}: Need help? Use "!requests pause" to pause requests, "!requests setconfirm" to set request sent confirmation message, "!requests setsr" to set sr error mesage and "!requests setmessage" to set the ingame message.`
+				`@${tags["display-name"]}: Need help? Use "!requests pause" to pause requests, "!requests setconfirm" to set request sent confirmation message, "!requests setsr" to set sr error mesage, "!requests setmodes" to set allowed beatmap playmodes and "!requests setmessage" to set the ingame message.`
 			);
 
 			break;

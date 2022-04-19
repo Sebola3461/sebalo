@@ -45,6 +45,8 @@ export default async (
 		);
 
 	if (url.split("/").length == 6) {
+		// ? Beatmap link
+
 		const beatmap = await fetchBeatmap(beatmap_id);
 
 		if (beatmap.status != 200)
@@ -154,6 +156,8 @@ export default async (
 			})
 		);
 	} else if (url.split("/").length == 5) {
+		// ? Beatmapset link
+
 		beatmap_id = beatmap_id.split("#")[0];
 
 		const beatmapset = await fetchBeatmapset(beatmap_id);

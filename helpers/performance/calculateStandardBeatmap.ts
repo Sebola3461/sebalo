@@ -36,8 +36,6 @@ export default async (
 	const accuracies = [100, 99.5, 99, 98, 95];
 	const results: any[] = [];
 
-	console.log(beatmap_ruleset.difficulty.overallDifficulty);
-
 	accuracies.forEach((acc) => {
 		const score = new ScoreInfo();
 		score.beatmap = parsed;
