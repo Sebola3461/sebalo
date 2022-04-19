@@ -19,6 +19,16 @@ export async function twitchClient(bancho: BanchoClient) {
 			channels: channels,
 		});
 
+		setInterval(async () => {
+			let all_channels = await getChannels();
+
+			all_channels.forEach((channel) => {
+				if (!client.getChannels().includes("#".concat(channel))) {
+					client.join(channel);
+				}
+			});
+		}, 5000);
+
 		await client.connect();
 
 		console.log("Twitch client running!");
