@@ -32,7 +32,14 @@ export default new Schema({
 			},
 			modes: [0, 1, 2, 3],
 			blacklist: [],
-			status: ["ranked", "unranked", "wip", "graveyard", "pending"],
+			status: [
+				"ranked",
+				"wip",
+				"graveyard",
+				"pending",
+				"loved",
+				"qualified",
+			],
 		},
 	},
 	osu: {

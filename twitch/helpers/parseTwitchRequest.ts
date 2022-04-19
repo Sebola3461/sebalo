@@ -103,6 +103,20 @@ export default async (
 				)
 			);
 
+		if (!db_channel.twitch_options.status.includes(beatmap.data.status))
+			return client.say(
+				channel,
+				placeholderParser(
+					db_channel.twitch_options.messages.invalid_status,
+					{
+						modes: {
+							regex: /{beatmap_status}/g,
+							text: db_channel.twitch_options.status.join(", "),
+						},
+					}
+				)
+			);
+
 		bancho.getUser(user.data.username).sendMessage(
 			placeholderParser(db_channel.twitch_options.messages.request, {
 				username: {
@@ -217,6 +231,20 @@ export default async (
 						text: db_channel.twitch_options.separator,
 					},
 				})
+			);
+
+		if (!db_channel.twitch_options.status.includes(beatmap.status))
+			return client.say(
+				channel,
+				placeholderParser(
+					db_channel.twitch_options.messages.invalid_status,
+					{
+						modes: {
+							regex: /{beatmap_status}/g,
+							text: db_channel.twitch_options.status.join(", "),
+						},
+					}
+				)
 			);
 
 		await users.findByIdAndUpdate(user.data.id, {
