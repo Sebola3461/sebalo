@@ -164,7 +164,7 @@ export default async (
 					text: db_channel.twitch_options.separator,
 				},
 				user: {
-					regex: /{user}/g,
+					regex: /{username}/g,
 					text: tags["display-name"],
 				},
 			})
@@ -292,7 +292,7 @@ export default async (
 					text: db_channel.twitch_options.separator,
 				},
 				user: {
-					regex: /{user}/g,
+					regex: /{username}/g,
 					text: tags["display-name"],
 				},
 			})
