@@ -14,22 +14,30 @@ export default async (
 		(u) => u.twitch.channel == channel.slice(1)
 	)[0];
 
-	if (!db_channel) return client.say(channel, "User not found.");
+	if (!db_channel)
+		return client.say(channel, "User not found.").catch((e) => {
+			console.log(e);
+		});
 
 	const value = Number(args[1]);
 
 	if (isNaN(value))
-		return client.say(
-			channel,
-			`@${tags["display-name"]}: Provide a valid number!`
-		);
+		return client
+			.say(channel, `@${tags["display-name"]}: Provide a valid number!`)
+			.catch((e) => {
+				console.log(e);
+			});
 
 	db_channel.twitch_options.sr.max_sr = value;
 
 	await users.findByIdAndUpdate(db_channel._id, db_channel);
 
-	return client.say(
-		channel,
-		`@${tags["display-name"]}: Done! Only requests with less than ${value} stars will be sent.`
-	);
+	return client
+		.say(
+			channel,
+			`@${tags["display-name"]}: Done! Only requests with less than ${value} stars will be sent.`
+		)
+		.catch((e) => {
+			console.log(e);
+		});
 };

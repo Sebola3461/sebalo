@@ -16,14 +16,22 @@ export default async (
 	if (!db_channel) return client.say(channel, "User not found.");
 
 	if (db_channel.twitch_options.pause == true)
-		return client.say(
-			channel,
-			`@${tags["display-name"]}: The requests are already paused, use !requests resume to resume.`
-		);
+		return client
+			.say(
+				channel,
+				`@${tags["display-name"]}: The requests are already paused, use !requests resume to resume.`
+			)
+			.catch((e) => {
+				console.log(e);
+			});
 
 	db_channel.twitch_options.pause = true;
 
 	await users.findByIdAndUpdate(db_channel._id, db_channel);
 
-	return client.say(channel, `@${tags["display-name"]}: Requests paused!`);
+	return client
+		.say(channel, `@${tags["display-name"]}: Requests paused!`)
+		.catch((e) => {
+			console.log(e);
+		});
 };

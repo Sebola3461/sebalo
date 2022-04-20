@@ -30,10 +30,14 @@ export default (
 
 				break;
 			} else {
-				client.say(
-					channel,
-					`@${tags["display-name"]}: Invalid permissions.`
-				);
+				client
+					.say(
+						channel,
+						`@${tags["display-name"]}: Invalid permissions.`
+					)
+					.catch((e) => {
+						console.log(e);
+					});
 
 				break;
 			}
@@ -46,19 +50,27 @@ export default (
 			} else if (tags.mod) {
 				return remove(message, tags, channel, bancho, client, args);
 			} else {
-				return client.say(
-					channel,
-					`@${tags["display-name"]}: Invalid permissions.`
-				);
+				return client
+					.say(
+						channel,
+						`@${tags["display-name"]}: Invalid permissions.`
+					)
+					.catch((e) => {
+						console.log(e);
+					});
 			}
 
 			break;
 		}
 		default: {
-			client.say(
-				channel,
-				`@${tags["display-name"]}: Need help? Follow this link: https://github.com/Sebola3461/sebalo/wiki/Requests-Configuration`
-			);
+			client
+				.say(
+					channel,
+					`@${tags["display-name"]}: Need help? Follow this link: https://github.com/Sebola3461/sebalo/wiki/Requests-Configuration`
+				)
+				.catch((e) => {
+					console.log(e);
+				});
 
 			break;
 		}

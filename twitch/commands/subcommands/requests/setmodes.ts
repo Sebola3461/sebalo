@@ -14,17 +14,21 @@ export default async (
 		(u) => u.twitch.channel == channel.slice(1)
 	)[0];
 
-	if (!db_channel) return client.say(channel, "User not found.");
+	if (!db_channel)
+		return client.say(channel, "User not found.").catch((e) => {
+			console.log(e);
+		});
 
 	const valid_modes = ["osu", "taiko", "fruits", "mania"];
 
 	args.shift();
 
 	if (args.length < 1)
-		return client.say(
-			channel,
-			`@${tags["display-name"]}: Provide valid modes!`
-		);
+		return client
+			.say(channel, `@${tags["display-name"]}: Provide valid modes!`)
+			.catch((e) => {
+				console.log(e);
+			});
 
 	const new_modes: number[] = [];
 
@@ -39,10 +43,14 @@ export default async (
 	});
 
 	if (new_modes.length < 1)
-		return client.say(
-			channel,
-			`@${tags["display-name"]}: Provide valid modes! You can use "osu", "taiko", "fruits" and "mania"`
-		);
+		return client
+			.say(
+				channel,
+				`@${tags["display-name"]}: Provide valid modes! You can use "osu", "taiko", "fruits" and "mania"`
+			)
+			.catch((e) => {
+				console.log(e);
+			});
 
 	db_channel.twitch_options.modes = new_modes;
 
@@ -54,10 +62,14 @@ export default async (
 		return new_modes_string.push(valid_modes[mode]);
 	});
 
-	return client.say(
-		channel,
-		`@${
-			tags["display-name"]
-		}: Request modes changed to ${new_modes_string.join(", ")}!`
-	);
+	return client
+		.say(
+			channel,
+			`@${
+				tags["display-name"]
+			}: Request modes changed to ${new_modes_string.join(", ")}!`
+		)
+		.catch((e) => {
+			console.log(e);
+		});
 };

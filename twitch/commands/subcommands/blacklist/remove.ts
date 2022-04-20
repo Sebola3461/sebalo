@@ -17,24 +17,30 @@ export default async (
 	if (!db_channel) return client.say(channel, "Streamer not found.");
 
 	if (!args[1])
-		return client.say(
-			channel,
-			`@${tags["display-name"]}: Provide a valid user!`
-		);
+		return client
+			.say(channel, `@${tags["display-name"]}: Provide a valid user!`)
+			.catch((e) => {
+				console.log(e);
+			});
 
 	const user = args[1].toLowerCase().trim().replace(/@/g, "");
 
 	if (user == "")
-		return client.say(
-			channel,
-			`@${tags["display-name"]}: Provide a valid user!`
-		);
+		return client
+			.say(channel, `@${tags["display-name"]}: Provide a valid user!`)
+			.catch((e) => {
+				console.log(e);
+			});
 
 	if (!db_channel.twitch_options.blacklist.includes(user))
-		return client.say(
-			channel,
-			`@${tags["display-name"]}: This user isn't blacklisted!`
-		);
+		return client
+			.say(
+				channel,
+				`@${tags["display-name"]}: This user isn't blacklisted!`
+			)
+			.catch((e) => {
+				console.log(e);
+			});
 
 	const index = db_channel.twitch_options.blacklist.findIndex(
 		(u: string) => u == user
@@ -44,8 +50,12 @@ export default async (
 
 	await users.findByIdAndUpdate(db_channel._id, db_channel);
 
-	return client.say(
-		channel,
-		`@${tags["display-name"]}: Done! User removed from blacklist!`
-	);
+	return client
+		.say(
+			channel,
+			`@${tags["display-name"]}: Done! User removed from blacklist!`
+		)
+		.catch((e) => {
+			console.log(e);
+		});
 };

@@ -14,7 +14,10 @@ export default async (
 		(u) => u.twitch.channel == channel.slice(1)
 	)[0];
 
-	if (!db_channel) return client.say(channel, "User not found.");
+	if (!db_channel)
+		return client.say(channel, "User not found.").catch((e) => {
+			console.log(e);
+		});
 
 	const valid_status = [
 		"ranked",
@@ -28,10 +31,11 @@ export default async (
 	args.shift();
 
 	if (args.length < 1)
-		return client.say(
-			channel,
-			`@${tags["display-name"]}: Provide valid modes!`
-		);
+		return client
+			.say(channel, `@${tags["display-name"]}: Provide valid modes!`)
+			.catch((e) => {
+				console.log(e);
+			});
 
 	const new_status: string[] = [];
 
@@ -42,19 +46,27 @@ export default async (
 	});
 
 	if (new_status.length < 1)
-		return client.say(
-			channel,
-			`@${tags["display-name"]}: Provide valid modes! You can use "ranked", "unranked", "wip", "graveyard","pending", "loved" and "qualified"`
-		);
+		return client
+			.say(
+				channel,
+				`@${tags["display-name"]}: Provide valid modes! You can use "ranked", "unranked", "wip", "graveyard","pending", "loved" and "qualified"`
+			)
+			.catch((e) => {
+				console.log(e);
+			});
 
 	db_channel.twitch_options.status = new_status;
 
 	await users.findByIdAndUpdate(db_channel._id, db_channel);
 
-	return client.say(
-		channel,
-		`@${
-			tags["display-name"]
-		}: Request beatmap status changed to ${new_status.join(", ")}!`
-	);
+	return client
+		.say(
+			channel,
+			`@${
+				tags["display-name"]
+			}: Request beatmap status changed to ${new_status.join(", ")}!`
+		)
+		.catch((e) => {
+			console.log(e);
+		});
 };

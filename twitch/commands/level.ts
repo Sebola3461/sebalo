@@ -38,10 +38,11 @@ export default async (
 	const level = user.levels.filter((l: any) => l.channel == channel)[0];
 
 	if (!level)
-		return client.say(
-			channel,
-			`@${tags.username} [#0] Level 0, Xp: 0 | Next: 0/120`
-		);
+		return client
+			.say(channel, `@${tags.username} [#0] Level 0, Xp: 0 | Next: 0/120`)
+			.catch((e) => {
+				console.log(e);
+			});
 
 	const user_rank = channel_users.findIndex(
 		(l) => l.username == tags.username

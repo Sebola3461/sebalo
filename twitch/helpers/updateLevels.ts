@@ -66,10 +66,14 @@ export default (client: Client) => {
 				channel_level.level++;
 				channel_level.next_level_xp += channel_level.xp * 1.5;
 
-				client.action(
-					channel,
-					`${user.username} has advanced to level ${channel_level.level}!`
-				);
+				client
+					.action(
+						channel,
+						`${user.username} has advanced to level ${channel_level.level}!`
+					)
+					.catch((e) => {
+						console.log(e);
+					});
 			}
 
 			const channel_level_index = user.levels.findIndex(

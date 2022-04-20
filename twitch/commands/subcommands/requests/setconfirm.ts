@@ -19,17 +19,22 @@ export default async (
 	args.shift();
 
 	if (args.length < 1)
-		return client.say(
-			channel,
-			`@${tags["display-name"]}: Provide a valid message!`
-		);
+		return client
+			.say(channel, `@${tags["display-name"]}: Provide a valid message!`)
+			.catch((e) => {
+				console.log(e);
+			});
 
 	db_channel.twitch_options.messages.confirmation = args.join(" ");
 
 	await users.findByIdAndUpdate(db_channel._id, db_channel);
 
-	return client.say(
-		channel,
-		`@${tags["display-name"]}: Request confirmation message changed!`
-	);
+	return client
+		.say(
+			channel,
+			`@${tags["display-name"]}: Request confirmation message changed!`
+		)
+		.catch((e) => {
+			console.log(e);
+		});
 };

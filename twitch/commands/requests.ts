@@ -28,10 +28,14 @@ export default (
 
 				break;
 			} else {
-				client.say(
-					channel,
-					`@${tags["display-name"]}: Invalid permissions.`
-				);
+				client
+					.say(
+						channel,
+						`@${tags["display-name"]}: Invalid permissions.`
+					)
+					.catch((e) => {
+						console.log(e);
+					});
 
 				break;
 			}
@@ -44,10 +48,14 @@ export default (
 			} else if (tags.mod) {
 				return resume(message, tags, channel, bancho, client);
 			} else {
-				return client.say(
-					channel,
-					`@${tags["display-name"]}: Invalid permissions.`
-				);
+				return client
+					.say(
+						channel,
+						`@${tags["display-name"]}: Invalid permissions.`
+					)
+					.catch((e) => {
+						console.log(e);
+					});
 			}
 
 			break;
@@ -58,10 +66,14 @@ export default (
 			} else if (tags.mod) {
 				return setconfirm(message, tags, channel, bancho, client, args);
 			} else {
-				return client.say(
-					channel,
-					`@${tags["display-name"]}: Invalid permissions.`
-				);
+				return client
+					.say(
+						channel,
+						`@${tags["display-name"]}: Invalid permissions.`
+					)
+					.catch((e) => {
+						console.log(e);
+					});
 			}
 
 			break;
@@ -72,10 +84,14 @@ export default (
 			} else if (tags.mod) {
 				return setmessage(message, tags, channel, bancho, client, args);
 			} else {
-				return client.say(
-					channel,
-					`@${tags["display-name"]}: Invalid permissions.`
-				);
+				return client
+					.say(
+						channel,
+						`@${tags["display-name"]}: Invalid permissions.`
+					)
+					.catch((e) => {
+						console.log(e);
+					});
 			}
 
 			break;
@@ -86,10 +102,14 @@ export default (
 			} else if (tags.mod) {
 				return setmodes(message, tags, channel, bancho, client, args);
 			} else {
-				return client.say(
-					channel,
-					`@${tags["display-name"]}: Invalid permissions.`
-				);
+				return client
+					.say(
+						channel,
+						`@${tags["display-name"]}: Invalid permissions.`
+					)
+					.catch((e) => {
+						console.log(e);
+					});
 			}
 
 			break;
@@ -100,10 +120,14 @@ export default (
 			} else if (tags.mod) {
 				return setstatus(message, tags, channel, bancho, client, args);
 			} else {
-				return client.say(
-					channel,
-					`@${tags["display-name"]}: Invalid permissions.`
-				);
+				return client
+					.say(
+						channel,
+						`@${tags["display-name"]}: Invalid permissions.`
+					)
+					.catch((e) => {
+						console.log(e);
+					});
 			}
 
 			break;
@@ -114,10 +138,14 @@ export default (
 			} else if (tags.mod) {
 				return modemsg(message, tags, channel, bancho, client, args);
 			} else {
-				return client.say(
-					channel,
-					`@${tags["display-name"]}: Invalid permissions.`
-				);
+				return client
+					.say(
+						channel,
+						`@${tags["display-name"]}: Invalid permissions.`
+					)
+					.catch((e) => {
+						console.log(e);
+					});
 			}
 
 			break;
@@ -128,19 +156,27 @@ export default (
 			} else if (tags.mod) {
 				return statusmsg(message, tags, channel, bancho, client, args);
 			} else {
-				return client.say(
-					channel,
-					`@${tags["display-name"]}: Invalid permissions.`
-				);
+				return client
+					.say(
+						channel,
+						`@${tags["display-name"]}: Invalid permissions.`
+					)
+					.catch((e) => {
+						console.log(e);
+					});
 			}
 
 			break;
 		}
 		default: {
-			client.say(
-				channel,
-				`@${tags["display-name"]}: Need help? Follow this link: https://github.com/Sebola3461/sebalo/wiki/Requests-Configuration`
-			);
+			client
+				.say(
+					channel,
+					`@${tags["display-name"]}: Need help? Follow this link: https://github.com/Sebola3461/sebalo/wiki/Requests-Configuration`
+				)
+				.catch((e) => {
+					console.log(e);
+				});
 
 			break;
 		}

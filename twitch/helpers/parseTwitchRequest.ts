@@ -41,10 +41,11 @@ export default async (
 	let beatmap_id = url.split("/").pop() || "banana";
 
 	if (isNaN(Number(beatmap_id)) && !beatmap_id.includes("#"))
-		return client.say(
-			channel,
-			`@${tags["display-name"]}: Invalid beatmap!`
-		);
+		return client
+			.say(channel, `@${tags["display-name"]}: Invalid beatmap!`)
+			.catch((e) => {
+				console.log(e);
+			});
 
 	if (url.split("/").length == 6) {
 		// ? Beatmap link
@@ -52,10 +53,11 @@ export default async (
 		const beatmap = await fetchBeatmap(beatmap_id);
 
 		if (beatmap.status != 200)
-			return client.say(
-				channel,
-				`@${tags["display-name"]}: Invalid beatmap!`
-			);
+			return client
+				.say(channel, `@${tags["display-name"]}: Invalid beatmap!`)
+				.catch((e) => {
+					console.log(e);
+				});
 
 		if (!beatmap.data) return;
 
@@ -73,108 +75,143 @@ export default async (
 			Number(message.att.starRating.toFixed(2)) >
 				db_channel.twitch_options.sr.max_sr
 		)
-			return client.say(
-				channel,
-				placeholderParser(db_channel.twitch_options.messages.bad_sr, {
-					min_sr: {
-						regex: /{sr_min}/g,
-						text: db_channel.twitch_options.sr.min_sr.toFixed(2),
-					},
-					max_sr: {
-						regex: /{sr_max}/g,
-						text: db_channel.twitch_options.sr.max_sr.toFixed(2),
-					},
-				})
-			);
+			return client
+				.say(
+					channel,
+					placeholderParser(
+						db_channel.twitch_options.messages.bad_sr,
+						{
+							min_sr: {
+								regex: /{sr_min}/g,
+								text: db_channel.twitch_options.sr.min_sr.toFixed(
+									2
+								),
+							},
+							max_sr: {
+								regex: /{sr_max}/g,
+								text: db_channel.twitch_options.sr.max_sr.toFixed(
+									2
+								),
+							},
+						}
+					)
+				)
+				.catch((e) => {
+					console.log(e);
+				});
 
 		await users.findByIdAndUpdate(user.data.id, {
 			last_beatmap: beatmap.data.id,
 		});
 
 		if (!db_channel.twitch_options.modes.includes(beatmap.data.mode_int))
-			return client.say(
-				channel,
-				placeholderParser(
-					db_channel.twitch_options.messages.invalid_mode,
-					{
-						modes: {
-							regex: /{modes}/g,
-							text: parseModes(db_channel.twitch_options.modes),
-						},
-					}
+			return client
+				.say(
+					channel,
+					placeholderParser(
+						db_channel.twitch_options.messages.invalid_mode,
+						{
+							modes: {
+								regex: /{modes}/g,
+								text: parseModes(
+									db_channel.twitch_options.modes
+								),
+							},
+						}
+					)
 				)
-			);
+				.catch((e) => {
+					console.log(e);
+				});
 
 		if (!db_channel.twitch_options.status.includes(beatmap.data.status))
-			return client.say(
+			return client
+				.say(
+					channel,
+					placeholderParser(
+						db_channel.twitch_options.messages.invalid_status,
+						{
+							modes: {
+								regex: /{beatmap_status}/g,
+								text: db_channel.twitch_options.status.join(
+									", "
+								),
+							},
+						}
+					)
+				)
+				.catch((e) => {
+					console.log(e);
+				});
+
+		bancho
+			.getUser(user.data.username)
+			.sendMessage(
+				placeholderParser(db_channel.twitch_options.messages.request, {
+					username: {
+						regex: /{username}/g,
+						text: `${tags["display-name"]}`,
+					},
+					beatmap: {
+						regex: /{beatmap}/g,
+						text: `${message.text}`,
+					},
+					separator: {
+						regex: /{separator}/g,
+						text: db_channel.twitch_options.separator,
+					},
+					mode: {
+						regex: /{mode}/g,
+						text: ` ${
+							beatmap.data.mode != "osu"
+								? `<osu!${beatmap.data.mode}>`
+								: ""
+						}`,
+					},
+				})
+			)
+			.catch((e) => {
+				console.log(e);
+			});
+
+		return client
+			.say(
 				channel,
 				placeholderParser(
-					db_channel.twitch_options.messages.invalid_status,
+					db_channel.twitch_options.messages.confirmation,
 					{
-						modes: {
-							regex: /{beatmap_status}/g,
-							text: db_channel.twitch_options.status.join(", "),
+						beatmap: {
+							regex: /{beatmap}/g,
+							text: `${beatmap.data.beatmapset.artist} - ${
+								beatmap.data.beatmapset.title
+							} [${
+								beatmap.data.version
+							}] (${message.att.starRating.toFixed(2)}★${
+								mods == "NM" ? "" : ` +${mods}`
+							}) ${
+								beatmap.data.mode != "osu"
+									? `<osu!${beatmap.data.mode}>`
+									: ""
+							}`,
+						},
+						separator: {
+							regex: /{separator}/g,
+							text: db_channel.twitch_options.separator,
+						},
+						username: {
+							regex: /{username}/g,
+							text: tags["display-name"],
+						},
+						user: {
+							regex: /{user}/g,
+							text: tags["display-name"],
 						},
 					}
 				)
-			);
-
-		bancho.getUser(user.data.username).sendMessage(
-			placeholderParser(db_channel.twitch_options.messages.request, {
-				username: {
-					regex: /{username}/g,
-					text: `${tags["display-name"]}`,
-				},
-				beatmap: {
-					regex: /{beatmap}/g,
-					text: `${message.text}`,
-				},
-				separator: {
-					regex: /{separator}/g,
-					text: db_channel.twitch_options.separator,
-				},
-				mode: {
-					regex: /{mode}/g,
-					text: ` ${
-						beatmap.data.mode != "osu"
-							? `<osu!${beatmap.data.mode}>`
-							: ""
-					}`,
-				},
-			})
-		);
-
-		return client.say(
-			channel,
-			placeholderParser(db_channel.twitch_options.messages.confirmation, {
-				beatmap: {
-					regex: /{beatmap}/g,
-					text: `${beatmap.data.beatmapset.artist} - ${
-						beatmap.data.beatmapset.title
-					} [${
-						beatmap.data.version
-					}] (${message.att.starRating.toFixed(2)}★${
-						mods == "NM" ? "" : ` +${mods}`
-					}) ${
-						beatmap.data.mode != "osu"
-							? `<osu!${beatmap.data.mode}>`
-							: ""
-					}`,
-				},
-				separator: {
-					regex: /{separator}/g,
-					text: db_channel.twitch_options.separator,
-				},
-				username: {
-					regex: /{username}/g,
-					text: tags["display-name"],
-				},
-				user: {
-					regex: /{user}/g,
-					text: tags["display-name"],
-				},
-			})
-		);
+			)
+			.catch((e) => {
+				console.log(e);
+			});
 	} else if (url.split("/").length == 5) {
 		// ? Beatmapset link
 
@@ -183,10 +220,11 @@ export default async (
 		const beatmapset = await fetchBeatmapset(beatmap_id);
 
 		if (beatmapset.status != 200)
-			return client.say(
-				channel,
-				`@${tags["display-name"]}: Invalid beatmap!`
-			);
+			return client
+				.say(channel, `@${tags["display-name"]}: Invalid beatmap!`)
+				.catch((e) => {
+					console.log(e);
+				});
 
 		if (!beatmapset.data || !beatmapset.data.beatmaps) return;
 
@@ -200,18 +238,24 @@ export default async (
 		if (!user.data) return;
 
 		if (!db_channel.twitch_options.modes.includes(beatmap.mode_int))
-			return client.say(
-				channel,
-				placeholderParser(
-					db_channel.twitch_options.messages.invalid_mode,
-					{
-						modes: {
-							regex: /{modes}/g,
-							text: parseModes(db_channel.twitch_options.modes),
-						},
-					}
+			return client
+				.say(
+					channel,
+					placeholderParser(
+						db_channel.twitch_options.messages.invalid_mode,
+						{
+							modes: {
+								regex: /{modes}/g,
+								text: parseModes(
+									db_channel.twitch_options.modes
+								),
+							},
+						}
+					)
 				)
-			);
+				.catch((e) => {
+					console.log(e);
+				});
 
 		const message = await getTwitchRequestMessage(beatmap, mods, true);
 
@@ -240,18 +284,24 @@ export default async (
 			);
 
 		if (!db_channel.twitch_options.status.includes(beatmap.status))
-			return client.say(
-				channel,
-				placeholderParser(
-					db_channel.twitch_options.messages.invalid_status,
-					{
-						modes: {
-							regex: /{beatmap_status}/g,
-							text: db_channel.twitch_options.status.join(", "),
-						},
-					}
+			return client
+				.say(
+					channel,
+					placeholderParser(
+						db_channel.twitch_options.messages.invalid_status,
+						{
+							modes: {
+								regex: /{beatmap_status}/g,
+								text: db_channel.twitch_options.status.join(
+									", "
+								),
+							},
+						}
+					)
 				)
-			);
+				.catch((e) => {
+					console.log(e);
+				});
 
 		await users.findByIdAndUpdate(user.data.id, {
 			last_beatmap: beatmap.id,
@@ -280,32 +330,43 @@ export default async (
 			})
 		);
 
-		return client.say(
-			channel,
-			placeholderParser(db_channel.twitch_options.messages.confirmation, {
-				beatmap: {
-					regex: /{beatmap}/g,
-					text: `${beatmap.beatmapset.artist} - ${
-						beatmap.beatmapset.title
-					} [${beatmap.version}] (${message.att.starRating.toFixed(
-						2
-					)}★${mods == "NM" ? "" : ` +${mods}`}) ${
-						beatmap.mode != "osu" ? `<osu!${beatmap.mode}>` : ""
-					}`,
-				},
-				separator: {
-					regex: /{separator}/g,
-					text: db_channel.twitch_options.separator,
-				},
-				username: {
-					regex: /{username}/g,
-					text: tags["display-name"],
-				},
-				user: {
-					regex: /{user}/g,
-					text: tags["display-name"],
-				},
-			})
-		);
+		return client
+			.say(
+				channel,
+				placeholderParser(
+					db_channel.twitch_options.messages.confirmation,
+					{
+						beatmap: {
+							regex: /{beatmap}/g,
+							text: `${beatmap.beatmapset.artist} - ${
+								beatmap.beatmapset.title
+							} [${
+								beatmap.version
+							}] (${message.att.starRating.toFixed(2)}★${
+								mods == "NM" ? "" : ` +${mods}`
+							}) ${
+								beatmap.mode != "osu"
+									? `<osu!${beatmap.mode}>`
+									: ""
+							}`,
+						},
+						separator: {
+							regex: /{separator}/g,
+							text: db_channel.twitch_options.separator,
+						},
+						username: {
+							regex: /{username}/g,
+							text: tags["display-name"],
+						},
+						user: {
+							regex: /{user}/g,
+							text: tags["display-name"],
+						},
+					}
+				)
+			)
+			.catch((e) => {
+				console.log(e);
+			});
 	}
 };

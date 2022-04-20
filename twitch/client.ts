@@ -9,6 +9,7 @@ import updateLevels from "./helpers/updateLevels";
 import checkUserDB from "./helpers/checkUserDB";
 import updateLastMessageDate from "./helpers/updateLastMessageDate";
 import getChannelUsers from "./helpers/getChannelUsers";
+import quitChannel from "./helpers/quitChannel";
 
 export async function twitchClient(bancho: BanchoClient) {
 	try {
@@ -24,18 +25,6 @@ export async function twitchClient(bancho: BanchoClient) {
 			channels: channels,
 		});
 
-		setInterval(async () => {
-			let all_channels = await getChannels();
-
-			all_channels.forEach(async (channel) => {
-				const channel_users = await getChannelUsers(channel.slice(1));
-
-				if (!client.getChannels().includes("#".concat(channel))) {
-					client.join(channel);
-				}
-			});
-		}, 5000);
-
 		await client.connect();
 
 		console.log("Twitch client running!");
@@ -47,6 +36,23 @@ export async function twitchClient(bancho: BanchoClient) {
 				console.error(e);
 			}
 		}, 15000);
+
+		client.on("connected", () => {
+			setInterval(async () => {
+				let all_channels = await getChannels();
+
+				all_channels.forEach(async (channel) => {
+					if (!client.getChannels().includes("#".concat(channel))) {
+						client.join(channel).catch((e) => {
+							if (e == "msg_banned")
+								return quitChannel(channel, client);
+
+							console.log(`Error on channel ${channel}: ${e}`);
+						});
+					}
+				});
+			}, 5000);
+		});
 
 		client.on("message", (channel, tags, message, self) => {
 			if (

@@ -14,22 +14,30 @@ export default async (
 		(u) => u.twitch.channel == channel.slice(1)
 	)[0];
 
-	if (!db_channel) return client.say(channel, "User not found.");
+	if (!db_channel)
+		return client.say(channel, "User not found.").catch((e) => {
+			console.log(e);
+		});
 
 	args.shift();
 
 	if (args.length < 1)
-		return client.say(
-			channel,
-			`@${tags["display-name"]}: Provide a valid message!`
-		);
+		return client
+			.say(channel, `@${tags["display-name"]}: Provide a valid message!`)
+			.catch((e) => {
+				console.log(e);
+			});
 
 	db_channel.twitch_options.messages.invalid_status = args.join(" ");
 
 	await users.findByIdAndUpdate(db_channel._id, db_channel);
 
-	return client.say(
-		channel,
-		`@${tags["display-name"]}: Request beatmap status error message message changed!`
-	);
+	return client
+		.say(
+			channel,
+			`@${tags["display-name"]}: Request beatmap status error message message changed!`
+		)
+		.catch((e) => {
+			console.log(e);
+		});
 };
