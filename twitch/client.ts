@@ -25,54 +25,75 @@ export async function twitchClient(bancho: BanchoClient) {
 			channels: channels,
 		});
 
-		await client.connect();
+		await client
+			.connect()
+			.then(() => {
+				console.log("Twitch client running!");
 
-		console.log("Twitch client running!");
+				try {
+					setInterval(() => {
+						try {
+							updateLevels(client);
+						} catch (e) {
+							console.error(e);
+						}
+					}, 30000);
 
-		setInterval(() => {
-			try {
-				updateLevels(client);
-			} catch (e) {
-				console.error(e);
-			}
-		}, 15000);
+					setInterval(async () => {
+						let all_channels = await getChannels();
 
-		client.on("connected", () => {
-			setInterval(async () => {
-				let all_channels = await getChannels();
+						all_channels.forEach(async (channel) => {
+							if (
+								!client
+									.getChannels()
+									.includes("#".concat(channel))
+							) {
+								client.join(channel).catch((e) => {
+									console.log(`err: ${e}`);
 
-				all_channels.forEach(async (channel) => {
-					if (!client.getChannels().includes("#".concat(channel))) {
-						client.join(channel).catch((e) => {
-							if (e == "msg_banned")
-								return quitChannel(channel, client);
+									if (e == "msg_banned")
+										return quitChannel(channel, client);
 
-							console.log(`Error on channel ${channel}: ${e}`);
+									console.log(
+										`Error on channel ${channel}: ${e}`
+									);
+								});
+							}
 						});
-					}
+					}, 5000);
+				} catch (e) {
+					console.error(`Client error: ${e}`);
+				}
+
+				client.on("message", (channel, tags, message, self) => {
+					if (
+						message.includes("https://osu.ppy.sh/") &&
+						!message.includes("/discussion")
+					)
+						return parseTwitchRequest(
+							message,
+							tags,
+							channel,
+							bancho,
+							client
+						);
+
+					checkUserDB(message, tags, channel, bancho, client);
+					updateLastMessageDate(
+						message,
+						tags,
+						channel,
+						bancho,
+						client
+					);
+
+					if (message.startsWith("!"))
+						commandHandler(message, tags, channel, bancho, client);
 				});
-			}, 5000);
-		});
-
-		client.on("message", (channel, tags, message, self) => {
-			if (
-				message.includes("https://osu.ppy.sh/") &&
-				!message.includes("/discussion")
-			)
-				return parseTwitchRequest(
-					message,
-					tags,
-					channel,
-					bancho,
-					client
-				);
-
-			checkUserDB(message, tags, channel, bancho, client);
-			updateLastMessageDate(message, tags, channel, bancho, client);
-
-			if (message.startsWith("!"))
-				commandHandler(message, tags, channel, bancho, client);
-		});
+			})
+			.catch((e) => {
+				console.error(`Error during twitch client start: ${e}`);
+			});
 	} catch (e) {
 		console.error(e);
 	}

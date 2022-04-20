@@ -2,23 +2,14 @@ import { Client } from "tmi.js";
 import { users } from "../../database";
 
 export default async (channel: string, client: Client) => {
+	console.log(channel);
 	const user = (await users.find()).filter(
-		(u) => u.twitch.channel == channel.slice(1)
+		(u) => u.twitch.channel == channel
 	)[0];
 
-	if (!user) {
-		console.log(`Leaving channel ${channel} cuz i'm banned.`);
-
-		await client.part(channel);
-
-		console.log(`Bye ${channel}`);
-
-		return;
-	}
+	if (!user) return;
 
 	console.log(`Leaving channel ${channel} cuz i'm banned.`);
-
-	await client.part(channel);
 
 	user.twitch = {
 		token: "",
