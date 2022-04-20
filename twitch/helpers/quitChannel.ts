@@ -16,15 +16,17 @@ export default async (channel: string, client: Client) => {
 		return;
 	}
 
+	console.log(`Leaving channel ${channel} cuz i'm banned.`);
+
 	await client.part(channel);
 
-	await users.findByIdAndUpdate(user._id, {
-		twitch: {
-			token: "",
-			channel: "",
-			id: "",
-		},
-	});
+	user.twitch = {
+		token: "",
+		channel: "",
+		id: "",
+	};
+
+	await users.findByIdAndUpdate(user._id, user);
 
 	console.log(`Bye ${channel}`);
 

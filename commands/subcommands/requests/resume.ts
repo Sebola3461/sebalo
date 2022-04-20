@@ -23,5 +23,5 @@ export default async (pm: PrivateMessage, user: any) => {
 
 	await users.findByIdAndUpdate(user.id, db_user);
 
-	return pm.user.sendMessage(`Requests paused!`);
+	return pm.user.sendMessage(`Requests allowed again!`);
 };
