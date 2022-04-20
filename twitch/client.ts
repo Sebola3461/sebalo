@@ -8,6 +8,7 @@ import commandHandler from "./helpers/commandHandler";
 import updateLevels from "./helpers/updateLevels";
 import checkUserDB from "./helpers/checkUserDB";
 import updateLastMessageDate from "./helpers/updateLastMessageDate";
+import getChannelUsers from "./helpers/getChannelUsers";
 
 export async function twitchClient(bancho: BanchoClient) {
 	try {
@@ -26,7 +27,9 @@ export async function twitchClient(bancho: BanchoClient) {
 		setInterval(async () => {
 			let all_channels = await getChannels();
 
-			all_channels.forEach((channel) => {
+			all_channels.forEach(async (channel) => {
+				const channel_users = await getChannelUsers(channel.slice(1));
+
 				if (!client.getChannels().includes("#".concat(channel))) {
 					client.join(channel);
 				}

@@ -1,11 +1,22 @@
 import { Client } from "tmi.js";
 import { twitchUsers } from "../../database";
 import calculateDate from "./calculateDate";
+import getChannelUsers from "./getChannelUsers";
 
 export default (client: Client) => {
 	console.log("Updating levels...");
 
-	client.getChannels().forEach((channel) => {
+	client.getChannels().forEach(async (channel) => {
+		const channel_users = await getChannelUsers(channel.slice(1));
+
+		console.log(`Updating for ${channel}`);
+
+		if (channel_users.chatters.broadcaster.length < 1) {
+			console.log(`Skipping ${channel} cuz its offline`);
+
+			return;
+		}
+
 		updateFor(channel);
 	});
 
