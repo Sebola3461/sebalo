@@ -38,7 +38,11 @@ export async function twitchClient(bancho: BanchoClient) {
 		console.log("Twitch client running!");
 
 		setInterval(() => {
-			updateLevels(client);
+			try {
+				updateLevels(client);
+			} catch (e) {
+				console.error(e);
+			}
 		}, 15000);
 
 		client.on("message", (channel, tags, message, self) => {
