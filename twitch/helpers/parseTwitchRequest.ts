@@ -23,6 +23,8 @@ export default async (
 		(u) => u.twitch.channel == channel.slice(1)
 	)[0];
 
+	if (db_channel.twitch_options.blacklist.includes(tags.username)) return;
+
 	if (db_channel.twitch_options.pause)
 		return client.say(channel, db_channel.twitch_options.messages.paused);
 
