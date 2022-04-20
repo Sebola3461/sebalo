@@ -5,6 +5,9 @@ import getChannels from "./helpers/getChannels";
 import { BanchoClient } from "bancho.js";
 import parseTwitchRequest from "./helpers/parseTwitchRequest";
 import commandHandler from "./helpers/commandHandler";
+import updateLevels from "./helpers/updateLevels";
+import checkUserDB from "./helpers/checkUserDB";
+import updateLastMessageDate from "./helpers/updateLastMessageDate";
 
 export async function twitchClient(bancho: BanchoClient) {
 	try {
@@ -34,6 +37,10 @@ export async function twitchClient(bancho: BanchoClient) {
 
 		console.log("Twitch client running!");
 
+		setInterval(() => {
+			updateLevels(client);
+		}, 5000);
+
 		client.on("message", (channel, tags, message, self) => {
 			if (
 				message.includes("https://osu.ppy.sh/") &&
@@ -46,6 +53,9 @@ export async function twitchClient(bancho: BanchoClient) {
 					bancho,
 					client
 				);
+
+			checkUserDB(message, tags, channel, bancho, client);
+			updateLastMessageDate(message, tags, channel, bancho, client);
 
 			if (message.startsWith("!"))
 				commandHandler(message, tags, channel, bancho, client);

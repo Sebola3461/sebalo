@@ -23,7 +23,7 @@ export default new Schema({
 			},
 			messages: {
 				paused: "Sorry, the streamer isn't accepting requests right now.",
-				confirmation: "{user}: Request sended! -> {beatmap}",
+				confirmation: "{username}: Request sent! -> {beatmap}",
 				invalid_mode: "The streamer does not accept this gamemode.",
 				invalid_status:
 					"The streamer only accept {beatmap_status} beatmaps.",
