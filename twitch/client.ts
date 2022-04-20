@@ -39,7 +39,7 @@ export async function twitchClient(bancho: BanchoClient) {
 
 		setInterval(() => {
 			updateLevels(client);
-		}, 5000);
+		}, 15000);
 
 		client.on("message", (channel, tags, message, self) => {
 			if (
