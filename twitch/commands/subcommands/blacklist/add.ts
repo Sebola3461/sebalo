@@ -16,7 +16,13 @@ export default async (
 
 	if (!db_channel) return client.say(channel, "Streamer not found.");
 
-	const user = args[1].toLowerCase().trim();
+	if (!args[1])
+		return client.say(
+			channel,
+			`@${tags["display-name"]}: Provide a valid user!`
+		);
+
+	const user = args[1].toLowerCase().trim().replace(/@/g, "");
 
 	if (user == "")
 		return client.say(
