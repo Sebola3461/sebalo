@@ -1,5 +1,7 @@
 import { BanchoClient } from "bancho.js";
 import { ChatUserstate, Client } from "tmi.js";
+import add from "./subcommands/blacklist/add";
+import remove from "./subcommands/blacklist/remove";
 import modemsg from "./subcommands/requests/modemsg";
 import pause from "./subcommands/requests/pause";
 import resume from "./subcommands/requests/resume";
@@ -20,11 +22,11 @@ export default (
 	switch (args[0]) {
 		case "add": {
 			if (tags.username == channel.slice(1)) {
-				pause(message, tags, channel, bancho, client);
+				add(message, tags, channel, bancho, client, args);
 
 				break;
 			} else if (tags.mod) {
-				pause(message, tags, channel, bancho, client);
+				add(message, tags, channel, bancho, client, args);
 
 				break;
 			} else {
@@ -40,93 +42,9 @@ export default (
 		}
 		case "remove": {
 			if (tags.username == channel.slice(1)) {
-				return resume(message, tags, channel, bancho, client);
+				return remove(message, tags, channel, bancho, client, args);
 			} else if (tags.mod) {
-				return resume(message, tags, channel, bancho, client);
-			} else {
-				return client.say(
-					channel,
-					`@${tags["display-name"]}: Invalid permissions.`
-				);
-			}
-
-			break;
-		}
-		case "setconfirm": {
-			if (tags.username == channel.slice(1)) {
-				return setconfirm(message, tags, channel, bancho, client, args);
-			} else if (tags.mod) {
-				return setconfirm(message, tags, channel, bancho, client, args);
-			} else {
-				return client.say(
-					channel,
-					`@${tags["display-name"]}: Invalid permissions.`
-				);
-			}
-
-			break;
-		}
-		case "setmessage": {
-			if (tags.username == channel.slice(1)) {
-				return setmessage(message, tags, channel, bancho, client, args);
-			} else if (tags.mod) {
-				return setmessage(message, tags, channel, bancho, client, args);
-			} else {
-				return client.say(
-					channel,
-					`@${tags["display-name"]}: Invalid permissions.`
-				);
-			}
-
-			break;
-		}
-		case "setmodes": {
-			if (tags.username == channel.slice(1)) {
-				return setmodes(message, tags, channel, bancho, client, args);
-			} else if (tags.mod) {
-				return setmodes(message, tags, channel, bancho, client, args);
-			} else {
-				return client.say(
-					channel,
-					`@${tags["display-name"]}: Invalid permissions.`
-				);
-			}
-
-			break;
-		}
-		case "setstatus": {
-			if (tags.username == channel.slice(1)) {
-				return setstatus(message, tags, channel, bancho, client, args);
-			} else if (tags.mod) {
-				return setstatus(message, tags, channel, bancho, client, args);
-			} else {
-				return client.say(
-					channel,
-					`@${tags["display-name"]}: Invalid permissions.`
-				);
-			}
-
-			break;
-		}
-		case "modemsg": {
-			if (tags.username == channel.slice(1)) {
-				return modemsg(message, tags, channel, bancho, client, args);
-			} else if (tags.mod) {
-				return modemsg(message, tags, channel, bancho, client, args);
-			} else {
-				return client.say(
-					channel,
-					`@${tags["display-name"]}: Invalid permissions.`
-				);
-			}
-
-			break;
-		}
-		case "statusmsg": {
-			if (tags.username == channel.slice(1)) {
-				return statusmsg(message, tags, channel, bancho, client, args);
-			} else if (tags.mod) {
-				return statusmsg(message, tags, channel, bancho, client, args);
+				return remove(message, tags, channel, bancho, client, args);
 			} else {
 				return client.say(
 					channel,
