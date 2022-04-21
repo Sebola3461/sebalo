@@ -93,6 +93,10 @@ export default async (
 									2
 								),
 							},
+							separator: {
+								regex: /{separator}/g,
+								text: db_channel.twitch_options.separator,
+							},
 						}
 					)
 				)
