@@ -1,7 +1,7 @@
 import { Client } from "tmi.js";
-import { twitchUsers } from "../../database";
+import { twitchUsers } from "../../../database";
 import calculateDate from "./calculateDate";
-import getChannelUsers from "./getChannelUsers";
+import getChannelUsers from "../channel/getChannelUsers";
 
 export default (client: Client) => {
 	console.log("Updating levels...");

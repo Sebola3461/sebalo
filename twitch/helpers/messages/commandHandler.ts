@@ -1,6 +1,6 @@
 import { BanchoClient } from "bancho.js";
 import { ChatUserstate, Client } from "tmi.js";
-import commands from "../commands";
+import commands from "../../commands";
 
 export default (
 	message: string,

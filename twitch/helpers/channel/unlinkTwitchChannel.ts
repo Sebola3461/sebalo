@@ -1,5 +1,5 @@
 import { PrivateMessage } from "bancho.js";
-import { users } from "../../database";
+import { users } from "../../../database";
 
 export default async (user_id: number, pm: PrivateMessage) => {
 	let user = await users.findById(user_id);

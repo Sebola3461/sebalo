@@ -1,5 +1,5 @@
 import { Client } from "tmi.js";
-import { users } from "../../database";
+import { users } from "../../../database";
 
 export default async (channel: string, client: Client) => {
 	console.log(channel);

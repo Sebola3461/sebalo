@@ -1,4 +1,4 @@
-import { users } from "../../database";
+import { users } from "../../../database";
 
 export default async () => {
 	const db = (await users.find()).filter((u) => {

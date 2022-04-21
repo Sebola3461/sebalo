@@ -1,7 +1,7 @@
 import { BanchoClient } from "bancho.js";
 import { ChatUserstate, Client } from "tmi.js";
-import { users, twitchUsers } from "../../database";
-import createNewTwitchUser from "../../database/utils/createNewTwitchUser";
+import { users, twitchUsers } from "../../../database";
+import createNewTwitchUser from "../../../database/utils/createNewTwitchUser";
 
 export default async (
 	message: string,

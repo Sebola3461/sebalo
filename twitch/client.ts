@@ -1,15 +1,15 @@
 import tmi from "tmi.js";
 import dotenv from "dotenv";
 dotenv.config();
-import getChannels from "./helpers/getChannels";
+import getChannels from "./helpers/channel/getChannels";
 import { BanchoClient } from "bancho.js";
-import parseTwitchRequest from "./helpers/parseTwitchRequest";
-import commandHandler from "./helpers/commandHandler";
-import updateLevels from "./helpers/updateLevels";
-import checkUserDB from "./helpers/checkUserDB";
-import updateLastMessageDate from "./helpers/updateLastMessageDate";
-import getChannelUsers from "./helpers/getChannelUsers";
-import quitChannel from "./helpers/quitChannel";
+import parseTwitchRequest from "./helpers/messages/parseTwitchRequest";
+import commandHandler from "./helpers/messages/commandHandler";
+import updateLevels from "./helpers/levels/updateLevels";
+import checkUserDB from "./helpers/levels/checkUserDB";
+import updateLastMessageDate from "./helpers/levels/updateLastMessageDate";
+import getChannelUsers from "./helpers/channel/getChannelUsers";
+import quitChannel from "./helpers/channel/quitChannel";
 
 export async function twitchClient(bancho: BanchoClient) {
 	try {
@@ -68,6 +68,7 @@ export async function twitchClient(bancho: BanchoClient) {
 				client.on("message", (channel, tags, message, self) => {
 					if (
 						message.includes("https://osu.ppy.sh/") &&
+						message.includes("/b") &&
 						!message.includes("/discussion")
 					)
 						return parseTwitchRequest(
@@ -79,6 +80,7 @@ export async function twitchClient(bancho: BanchoClient) {
 						);
 
 					checkUserDB(message, tags, channel, bancho, client);
+
 					updateLastMessageDate(
 						message,
 						tags,

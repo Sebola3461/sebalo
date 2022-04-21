@@ -48,14 +48,21 @@ export default async (
 				console.log(e);
 			});
 
-	const user_rank = channel_users.findIndex(
-		(l) => l.username == tags.username
-	);
+	const username = args[0] || tags.username;
+
+	const user_rank = channel_users.findIndex((l) => l.username == username);
+
+	if (user_rank == -1)
+		return client
+			.say(channel, `@${tags.username}: User not found!`)
+			.catch((e) => {
+				console.log(e);
+			});
 
 	return client
 		.say(
 			channel,
-			`@${tags.username} [#${user_rank + 1}] Level ${level.level}, Xp: ${
+			`${username}: [#${user_rank + 1}] Level ${level.level}, Xp: ${
 				level.xp
 			} | Next: ${level.xp}/${level.next_level_xp}`
 		)

@@ -1,12 +1,12 @@
 import { BanchoClient } from "bancho.js";
 import { ChatUserstate, Client } from "tmi.js";
-import { users } from "../../database";
+import { users } from "../../../database";
 import fetchBeatmap, {
 	fetchBeatmapset,
-} from "../../helpers/fetcher/fetchBeatmap";
-import fetchUser from "../../helpers/fetcher/fetchUser";
-import getBeatmapMessage from "../../helpers/messages/getBeatmapMessage";
-import getTwitchRequestMessage from "../../helpers/messages/getTwitchRequestMessage";
+} from "../../../helpers/fetcher/fetchBeatmap";
+import fetchUser from "../../../helpers/fetcher/fetchUser";
+import getBeatmapMessage from "../../../helpers/messages/getBeatmapMessage";
+import getTwitchRequestMessage from "../../../helpers/messages/getTwitchRequestMessage";
 import parseModes from "./parseModes";
 import placeholderParser from "./placeholderParser";
 

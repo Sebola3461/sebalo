@@ -1,5 +1,5 @@
 import { PrivateMessage } from "bancho.js";
-import unlinkTwitchChannel from "../twitch/helpers/unlinkTwitchChannel";
+import unlinkTwitchChannel from "../twitch/helpers/channel/unlinkTwitchChannel";
 
 export default async (pm: PrivateMessage, args: string[], user: any) => {
 	console.log(
