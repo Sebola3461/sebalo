@@ -30,10 +30,14 @@ export default async (
 	});
 
 	if (user == null)
-		return client.say(
-			channel,
-			`@${tags.username} Wait... You don't exist in my database, wait some secounds and try again.`
-		);
+		return client
+			.say(
+				channel,
+				`@${tags.username} Wait... You don't exist in my database, wait some seconds and try again.`
+			)
+			.catch((e) => {
+				console.log(e);
+			});
 
 	const level = user.levels.filter((l: any) => l.channel == channel)[0];
 
@@ -48,10 +52,14 @@ export default async (
 		(l) => l.username == tags.username
 	);
 
-	return client.say(
-		channel,
-		`@${tags.username} [#${user_rank + 1}] Level ${level.level}, Xp: ${
-			level.xp
-		} | Next: ${level.xp}/${level.next_level_xp}`
-	);
+	return client
+		.say(
+			channel,
+			`@${tags.username} [#${user_rank + 1}] Level ${level.level}, Xp: ${
+				level.xp
+			} | Next: ${level.xp}/${level.next_level_xp}`
+		)
+		.catch((e) => {
+			console.log(e);
+		});
 };

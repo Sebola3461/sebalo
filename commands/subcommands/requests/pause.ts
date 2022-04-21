@@ -6,7 +6,7 @@ export default async (pm: PrivateMessage, user: any) => {
 
 	if (!db_user)
 		return pm.user.sendMessage(
-			"You dont exist in my database, wait some secounds and try again."
+			"You dont exist in my database, wait some seconds and try again."
 		);
 
 	if (db_user.twitch.channel.trim() == "")
