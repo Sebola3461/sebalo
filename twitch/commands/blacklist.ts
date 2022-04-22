@@ -25,10 +25,6 @@ export default (
 				add(message, tags, channel, bancho, client, args);
 
 				break;
-			} else if (tags.mod) {
-				add(message, tags, channel, bancho, client, args);
-
-				break;
 			} else {
 				client
 					.say(
@@ -46,8 +42,6 @@ export default (
 		}
 		case "remove": {
 			if (tags.username == channel.slice(1)) {
-				return remove(message, tags, channel, bancho, client, args);
-			} else if (tags.mod) {
 				return remove(message, tags, channel, bancho, client, args);
 			} else {
 				return client

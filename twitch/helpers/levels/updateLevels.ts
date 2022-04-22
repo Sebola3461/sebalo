@@ -1,5 +1,5 @@
 import { Client } from "tmi.js";
-import { twitchUsers } from "../../../database";
+import { twitchUsers, users } from "../../../database";
 import calculateDate from "./calculateDate";
 import getChannelUsers from "../channel/getChannelUsers";
 
@@ -22,8 +22,16 @@ export default (client: Client) => {
 
 	async function updateFor(channel: string) {
 		const db_users = await twitchUsers.find();
+		const db_channel = (await users.find()).filter(
+			(u: any) => u.twitch.channel == channel.slice(1)
+		)[0];
 
 		db_users.forEach((u) => {
+			if (db_channel.twitch_options.blacklist.includes(u.username))
+				return console.log(
+					`Skipping user ${u.username} cuz its blacklisted`
+				);
+
 			const level = u.levels.filter((l: any) => l.channel == channel)[0];
 
 			if (!level) return;

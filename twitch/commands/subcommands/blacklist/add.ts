@@ -1,6 +1,6 @@
 import { BanchoClient } from "bancho.js";
 import { ChatUserstate, Client } from "tmi.js";
-import { users } from "../../../../database";
+import { twitchUsers, users } from "../../../../database";
 
 export default async (
 	message: string,
@@ -49,10 +49,25 @@ export default async (
 
 	await users.findByIdAndUpdate(db_channel._id, db_channel);
 
+	const blacklisted_user = await twitchUsers.findOne({ username: user });
+
+	if (blacklisted_user != null) {
+		const level_index = blacklisted_user.levels.findIndex(
+			(l: any) => l.channel == channel
+		);
+
+		blacklisted_user.levels.splice(level_index, 1);
+
+		await twitchUsers.findByIdAndUpdate(
+			blacklisted_user._id,
+			blacklisted_user
+		);
+	}
+
 	return client
 		.say(
 			channel,
-			`@${tags["display-name"]}: Done! I don't will reply this user anymore.`
+			`@${tags["display-name"]}: Done! User added to blacklist. Requests and levels from this user will be deleted.`
 		)
 		.catch((e) => {
 			console.log(e);
