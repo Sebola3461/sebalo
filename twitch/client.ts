@@ -8,7 +8,7 @@ import commandHandler from "./helpers/messages/commandHandler";
 import updateLevels from "./helpers/levels/updateLevels";
 import checkUserDB from "./helpers/levels/checkUserDB";
 import updateLastMessageDate from "./helpers/levels/updateLastMessageDate";
-import getChannelUsers from "./helpers/channel/getChannelUsers";
+import "./helpers/api/connect";
 import quitChannel from "./helpers/channel/quitChannel";
 
 export async function twitchClient(bancho: BanchoClient) {
