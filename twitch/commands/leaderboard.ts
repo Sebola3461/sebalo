@@ -10,7 +10,12 @@ export default async (
 	args: string[]
 ) => {
 	return client
-		.say(channel, `Check level leaderboards here: ${channel.slice(1)}`)
+		.say(
+			channel,
+			`Check level leaderboards here: https://sebola-web.herokuapp.com/levels/${channel.slice(
+				1
+			)}`
+		)
 		.catch((e) => {
 			console.log(e);
 		});
