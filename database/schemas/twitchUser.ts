@@ -7,6 +7,14 @@ export default new Schema({
 	username: {
 		type: String,
 	},
+	avatar: {
+		type: String,
+		default: "",
+	},
+	offline_cover: {
+		type: String,
+		default: "",
+	},
 	last_message: {
 		type: Object,
 		default: {

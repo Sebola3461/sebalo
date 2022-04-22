@@ -1,5 +1,6 @@
 import { ChatUserstate } from "tmi.js";
 import * as database from "..";
+import getChannelInfo from "../../twitch/helpers/api/getChannelInfo";
 import user from "../schemas/user";
 
 export default async function createNewUser(user_data: ChatUserstate) {
@@ -17,9 +18,13 @@ export default async function createNewUser(user_data: ChatUserstate) {
 
 		if (fallback != null) return fallback;
 
+		const twitch_data = await getChannelInfo(user_data["username"] || "");
+
 		const u = new database.twitchUsers({
 			_id: user_data["user-id"],
 			username: user_data.username,
+			avatar: twitch_data.data?.avatar || "",
+			offline_cover: twitch_data.data?.offline_cover || "",
 		});
 
 		await u.save();

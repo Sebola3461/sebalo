@@ -20,6 +20,7 @@
     "osu-parsers": "^2.0.8",
     "osu-standard-stable": "^2.2.4",
     "osu-taiko-stable": "^2.1.2",
+    "querystring": "^0.2.1",
     "tmi.js": "^1.8.5"
   },
   "devDependencies": {
