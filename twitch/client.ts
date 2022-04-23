@@ -5,7 +5,7 @@ import getChannels from "./helpers/channel/getChannels";
 import { BanchoClient } from "bancho.js";
 import parseTwitchRequest from "./helpers/messages/parseTwitchRequest";
 import commandHandler from "./helpers/messages/commandHandler";
-import updateLevels from "./helpers/levels/updateLevels";
+import { updateLevels } from "./helpers/levels/updateLevels";
 import checkUserDB from "./helpers/levels/checkUserDB";
 import updateLastMessageDate from "./helpers/levels/updateLastMessageDate";
 import "./helpers/api/connect";
@@ -31,13 +31,11 @@ export async function twitchClient(bancho: BanchoClient) {
 				console.log("Twitch client running!");
 
 				try {
-					setInterval(() => {
-						try {
-							updateLevels(client);
-						} catch (e) {
-							console.error(e);
-						}
-					}, 30000);
+					try {
+						updateLevels(client);
+					} catch (e) {
+						console.error(e);
+					}
 
 					setInterval(async () => {
 						let all_channels = await getChannels();

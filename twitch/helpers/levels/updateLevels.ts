@@ -3,7 +3,7 @@ import { twitchUsers, users } from "../../../database";
 import calculateDate from "./calculateDate";
 import getChannelUsers from "../channel/getChannelUsers";
 
-export default (client: Client) => {
+export function updateLevels(client: Client) {
 	console.log("Updating levels...");
 
 	client.getChannels().forEach(async (channel) => {
@@ -91,8 +91,10 @@ export default (client: Client) => {
 			user.levels[channel_level_index] = channel_level;
 
 			await twitchUsers.findByIdAndUpdate(user._id, user);
+
+			setTimeout(updateLevels, 15000);
 		}
 	}
 
 	console.log("Levels updated!");
-};
+}
