@@ -18,10 +18,6 @@ export function updateLevels(client: Client) {
 		}
 
 		await updateFor(channel);
-
-		setTimeout(() => {
-			updateLevels(client);
-		}, 15000);
 	});
 
 	async function updateFor(channel: string) {
@@ -103,4 +99,8 @@ export function updateLevels(client: Client) {
 	}
 
 	console.log("Levels updated!");
+
+	setTimeout(() => {
+		updateLevels(client);
+	}, 15000);
 }
