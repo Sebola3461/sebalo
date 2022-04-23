@@ -14,7 +14,7 @@ export default async (beatmap: Beatmap, mods: string, with_url?: boolean) => {
 
 	let pps: any = {
 		pp100: "",
-		"99.5": "",
+		"pp99.5": "",
 		pp99: "",
 		pp98: "",
 		pp95: "",
