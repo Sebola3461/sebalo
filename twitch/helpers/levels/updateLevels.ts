@@ -38,6 +38,8 @@ export async function updateLevels(
 
 	if (user == null) {
 		user = await createNewTwitchUser(tags);
+
+		if (!user._id) return;
 		await createLevelObjectFor(tags, channel, message);
 	}
 
