@@ -57,8 +57,6 @@ export default async (beatmap: Beatmap, mods: string, with_url?: boolean) => {
 	function calculatePerformance() {
 		performance.forEach(
 			(p: { acc?: number; score?: number; pp: number }, i) => {
-				console.log(p.acc);
-
 				if (map_mode != "mania") {
 					pps[`pp${p.acc}`] = `${p.acc}%: ${p.pp}`;
 				} else {

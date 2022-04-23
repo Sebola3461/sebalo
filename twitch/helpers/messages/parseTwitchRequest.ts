@@ -166,23 +166,23 @@ export default async (
 					},
 					pp100: {
 						regex: /{pp100}/g,
-						text: `${message.pps.pp100}`,
+						text: `${message.pps.pp100}pp`,
 					},
 					pp995: {
 						regex: /{pp99\.5}/g,
-						text: `${message.pps["99.5"]}`,
+						text: `${message.pps["99.5"]}pp`,
 					},
 					pp99: {
 						regex: /{pp99}/g,
-						text: `${message.pps.pp99}`,
+						text: `${message.pps.pp99}pp`,
 					},
 					pp98: {
 						regex: /{pp98}/g,
-						text: `${message.pps.pp98}`,
+						text: `${message.pps.pp98}pp`,
 					},
 					pp95: {
 						regex: /{pp95}/g,
-						text: `${message.pps.pp95}`,
+						text: `${message.pps.pp95}pp`,
 					},
 					separator: {
 						regex: /{separator}/g,
@@ -351,23 +351,23 @@ export default async (
 				},
 				pp100: {
 					regex: /{pp100}/g,
-					text: `${message.pps.pp100}`,
+					text: `${message.pps.pp100}pp`,
 				},
 				pp99: {
 					regex: /{pp99}/g,
-					text: `${message.pps.pp99}`,
+					text: `${message.pps.pp99}pp`,
 				},
 				pp995: {
 					regex: /{pp99\.5}/g,
-					text: `${message.pps["pp99.5"]}`,
+					text: `${message.pps["pp99.5"]}pp`,
 				},
 				pp98: {
 					regex: /{pp98}/g,
-					text: `${message.pps.pp98}`,
+					text: `${message.pps.pp98}pp`,
 				},
 				pp95: {
 					regex: /{pp95}/g,
-					text: `${message.pps.pp95}`,
+					text: `${message.pps.pp95}pp`,
 				},
 				separator: {
 					regex: /{separator}/g,
