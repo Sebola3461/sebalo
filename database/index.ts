@@ -21,16 +21,3 @@ mongoose.connect(
 
 export const users = mongoose.model("Users", user);
 export const twitchUsers = mongoose.model("TwitchUsers", twitchUser);
-
-users.find().then((doc) => {
-	doc.filter(
-		(u: any) =>
-			u.twitch_options.messages.request ==
-			"{username} || {mode} {beatmap_url} | {attributes} | {pp100} • {pp99} • {pp98} • {pp99.5} • {pp95}"
-	).forEach(async (c) => {
-		c.twitch_options.messages.request =
-			"{username} || {mode} {beatmap_url} | {attributes} | {pp100} • {pp99} • {pp98} • {pp95}";
-
-		await users.findByIdAndUpdate(c._id, c);
-	});
-});
