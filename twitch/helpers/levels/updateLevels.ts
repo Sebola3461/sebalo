@@ -17,7 +17,11 @@ export function updateLevels(client: Client) {
 			return;
 		}
 
-		updateFor(channel);
+		await updateFor(channel);
+
+		setTimeout(() => {
+			updateLevels(client);
+		}, 15000);
 	});
 
 	async function updateFor(channel: string) {
@@ -26,7 +30,7 @@ export function updateLevels(client: Client) {
 			(u: any) => u.twitch.channel == channel.slice(1)
 		)[0];
 
-		db_users.forEach((u) => {
+		db_users.forEach(async (u) => {
 			if (db_channel.twitch_options.blacklist.includes(u.username))
 				return console.log(
 					`Skipping user ${u.username} cuz its blacklisted`
@@ -45,7 +49,7 @@ export function updateLevels(client: Client) {
 			if (points_add < 0) points_add = 0;
 			if (points_add > 20) points_add = 20;
 
-			updateUserLevel(points_add, u);
+			await updateUserLevel(points_add, u);
 		});
 
 		async function updateUserLevel(points: number, user: any) {
@@ -92,8 +96,10 @@ export function updateLevels(client: Client) {
 
 			await twitchUsers.findByIdAndUpdate(user._id, user);
 
-			setTimeout(updateLevels, 15000);
+			return void {};
 		}
+
+		return void {};
 	}
 
 	console.log("Levels updated!");
