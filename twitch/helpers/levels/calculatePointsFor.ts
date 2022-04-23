@@ -78,6 +78,7 @@ export default async (
 	// ? Update level
 	if (level.xp > level.next_level_xp) {
 		level.level += 1;
+		level.next_level_xp += level.xp * 1.5;
 		level.last_update = new Date();
 
 		user.levels[level_index] = level;
