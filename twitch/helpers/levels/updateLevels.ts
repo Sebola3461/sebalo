@@ -5,6 +5,8 @@ import getChannelUsers from "../channel/getChannelUsers";
 import calculatePointsFor from "./calculatePointsFor";
 import checkBlacklistedLevel from "./checkBlacklistedLevel";
 import createLevelObjectFor from "./createLevelObjectFor";
+import dotenv, { config } from "dotenv";
+dotenv.config();
 
 // TODO: Add typing for twitchUsers and users
 export async function updateLevels(
@@ -13,6 +15,7 @@ export async function updateLevels(
 	channel: string,
 	message: string
 ) {
+	if (tags.username == process.env.TWITCH_LOGIN) return;
 	console.log(`Updating levels for user ${tags.username} in ${channel}...`);
 
 	if (!tags["user-id"]) {
