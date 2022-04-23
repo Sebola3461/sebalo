@@ -6,10 +6,9 @@ import { BanchoClient } from "bancho.js";
 import parseTwitchRequest from "./helpers/messages/parseTwitchRequest";
 import commandHandler from "./helpers/messages/commandHandler";
 import { updateLevels } from "./helpers/levels/updateLevels";
-import checkUserDB from "./helpers/levels/checkUserDB";
-import updateLastMessageDate from "./helpers/levels/updateLastMessageDate";
 import "./helpers/api/connect";
 import quitChannel from "./helpers/channel/quitChannel";
+import user from "../database/schemas/user";
 
 export async function twitchClient(bancho: BanchoClient) {
 	try {
@@ -25,75 +24,54 @@ export async function twitchClient(bancho: BanchoClient) {
 			channels: channels,
 		});
 
-		await client
-			.connect()
-			.then(() => {
-				console.log("Twitch client running!");
+		await client.connect().catch((e) => {
+			console.error(`Error during twitch client start: ${e}`);
+		});
 
-				try {
-					try {
-						updateLevels(client);
-					} catch (e) {
-						console.error(e);
-					}
+		console.log("Twitch client running!");
 
-					setInterval(async () => {
-						let all_channels = await getChannels();
+		try {
+			setInterval(async () => {
+				let all_channels = await getChannels();
 
-						all_channels.forEach(async (channel) => {
-							if (
-								!client
-									.getChannels()
-									.includes("#".concat(channel))
-							) {
-								client.join(channel).catch((e) => {
-									console.log(`err: ${e}`);
+				all_channels.forEach(async (channel) => {
+					if (!client.getChannels().includes("#".concat(channel))) {
+						client.join(channel).catch((e) => {
+							console.log(`err: ${e}`);
 
-									if (e == "msg_banned")
-										return quitChannel(channel, client);
+							if (e == "msg_banned")
+								return quitChannel(channel, client);
 
-									console.log(
-										`Error on channel ${channel}: ${e}`
-									);
-								});
-							}
+							console.log(`Error on channel ${channel}: ${e}`);
 						});
-					}, 5000);
-				} catch (e) {
-					console.error(`Client error: ${e}`);
-				}
-
-				client.on("message", (channel, tags, message, self) => {
-					if (
-						message.includes("https://osu.ppy.sh/") &&
-						message.includes("/b") &&
-						!message.includes("/discussion")
-					)
-						return parseTwitchRequest(
-							message,
-							tags,
-							channel,
-							bancho,
-							client
-						);
-
-					checkUserDB(message, tags, channel, bancho, client);
-
-					updateLastMessageDate(
-						message,
-						tags,
-						channel,
-						bancho,
-						client
-					);
-
-					if (message.startsWith("!"))
-						commandHandler(message, tags, channel, bancho, client);
+					}
 				});
-			})
-			.catch((e) => {
-				console.error(`Error during twitch client start: ${e}`);
-			});
+			}, 5000);
+		} catch (e) {
+			console.error(`Client error: ${e}`);
+		}
+
+		client.on("message", async (channel, tags, message, self) => {
+			if (self) return;
+
+			if (
+				message.includes("https://osu.ppy.sh/") &&
+				message.includes("/b") &&
+				!message.includes("/discussion")
+			)
+				return parseTwitchRequest(
+					message,
+					tags,
+					channel,
+					bancho,
+					client
+				);
+
+			await updateLevels(client, tags, channel, message);
+
+			if (message.startsWith("!"))
+				commandHandler(message, tags, channel, bancho, client);
+		});
 	} catch (e) {
 		console.error(e);
 	}

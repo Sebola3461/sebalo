@@ -11,8 +11,10 @@
   "dependencies": {
     "axios": "^0.26.1",
     "bancho.js": "^0.9.7",
+    "colors": "^1.4.0",
     "dotenv": "^16.0.0",
     "express": "^4.17.3",
+    "leven": "^4.0.0",
     "mongoose": "^6.2.11",
     "node-fetch": "^3.2.3",
     "osu-catch-stable": "^2.1.2",

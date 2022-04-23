@@ -1,106 +1,68 @@
-import { Client } from "tmi.js";
+import { ChatUserstate, Client } from "tmi.js";
 import { twitchUsers, users } from "../../../database";
-import calculateDate from "./calculateDate";
+import createNewTwitchUser from "../../../database/utils/createNewTwitchUser";
 import getChannelUsers from "../channel/getChannelUsers";
+import calculatePointsFor from "./calculatePointsFor";
+import checkBlacklistedLevel from "./checkBlacklistedLevel";
+import createLevelObjectFor from "./createLevelObjectFor";
 
-export function updateLevels(client: Client) {
-	console.log("Updating levels...");
+// TODO: Add typing for twitchUsers and users
+export async function updateLevels(
+	client: Client,
+	tags: ChatUserstate,
+	channel: string,
+	message: string
+) {
+	console.log(`Updating levels for user ${tags.username} in ${channel}...`);
 
-	client.getChannels().forEach(async (channel) => {
-		const channel_users = await getChannelUsers(channel.slice(1));
-
-		console.log(`Updating for ${channel}`);
-
-		if (channel_users.chatters.broadcaster.length < 1) {
-			console.log(`Skipping ${channel} cuz its offline`);
-
-			return;
-		}
-
-		await updateFor(channel);
-	});
-
-	async function updateFor(channel: string) {
-		const db_users = await twitchUsers.find();
-		const db_channel = (await users.find()).filter(
-			(u: any) => u.twitch.channel == channel.slice(1)
-		)[0];
-
-		db_users.forEach(async (u) => {
-			if (db_channel.twitch_options.blacklist.includes(u.username))
-				return console.log(
-					`Skipping user ${u.username} cuz its blacklisted`
-				);
-
-			const level = u.levels.filter((l: any) => l.channel == channel)[0];
-
-			if (!level) return;
-
-			let points_add =
-				60 -
-				Math.round(
-					calculateDate(new Date(level.last_message_date), new Date())
-				);
-
-			if (points_add < 0) points_add = 0;
-			if (points_add > 20) points_add = 20;
-
-			await updateUserLevel(points_add, u);
-		});
-
-		async function updateUserLevel(points: number, user: any) {
-			let channel_level = user.levels.filter((l: any) => {
-				return l.channel == channel;
-			})[0];
-
-			if (!channel_level) {
-				channel_level = {
-					last_update: new Date(),
-					channel: channel,
-					level: 0,
-					xp: 0,
-					next_level_xp: 120,
-					last_message: "",
-					last_message_date: new Date(),
-				};
-
-				await twitchUsers.findByIdAndUpdate(user._id, user);
-			}
-
-			channel_level.xp += points;
-			channel_level.last_update = new Date();
-
-			if (channel_level.xp > channel_level.next_level_xp) {
-				channel_level.level++;
-				channel_level.next_level_xp += channel_level.xp * 1.5;
-
-				const channel_level_index = user.levels.findIndex(
-					(l: any) => l == channel_level
-				);
-
-				user.levels[channel_level_index] = channel_level;
-
-				await twitchUsers.findByIdAndUpdate(user._id, user);
-
-				return client
-					.action(
-						channel,
-						`${user.username} has advanced to level ${channel_level.level}!`
-					)
-					.catch((e) => {
-						console.log(e);
-					});
-			}
-
-			return void {};
-		}
-
-		return void {};
+	if (!tags["user-id"]) {
+		return console.log(
+			`Skipping ${tags.username} in ${channel} cuz it's a bot...`
+		);
 	}
 
-	console.log("Levels updated!");
+	const chat_users = await getChannelUsers(channel.slice(1));
 
-	setTimeout(() => {
-		updateLevels(client);
-	}, 15000);
+	if (chat_users.chatters.broadcaster.length != 1) {
+		console.log(
+			`Skipping ${tags.username} in ${channel} cuz the streamer is offline...`
+		);
+
+		return;
+	}
+
+	let user = await twitchUsers.findById(tags["user-id"]);
+
+	if (user == null) user = await createNewTwitchUser(tags);
+
+	let streamer = (await users.find()).filter(
+		(u: any) => u.twitch.channel == channel.slice(1)
+	)[0];
+
+	if (!streamer) return;
+
+	if (streamer.twitch_options.blacklist.includes(tags.username)) {
+		console.log(
+			`Skipping ${tags.username} in ${channel} cuz its blacklisted...`
+		);
+
+		checkBlacklistedLevel(tags, channel);
+
+		return;
+	}
+
+	// ? Level object index for this channel
+	let level_index = user.levels.findIndex((l: any) => l.channel == channel);
+
+	// ? Check if the user have a level object in this channel
+	if (level_index < 0) {
+		level_index = await createLevelObjectFor(tags, channel, message);
+
+		// ? Update current user object after add the level object
+		user = await twitchUsers.findById(tags["user-id"]);
+	}
+
+	await calculatePointsFor(client, tags, channel, user, level_index, message);
+
+	console.log(`Levels for user ${tags.username} in ${channel} updated!`);
 }
