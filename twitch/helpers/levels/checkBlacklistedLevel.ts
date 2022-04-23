@@ -1,6 +1,5 @@
 import { ChatUserstate, Client } from "tmi.js";
 import "colors";
-import calculateDate from "./calculateDate";
 import { twitchUsers } from "../../../database";
 
 export default async (tags: ChatUserstate, channel: string) => {
