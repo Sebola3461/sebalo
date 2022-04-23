@@ -359,7 +359,7 @@ export default async (
 				},
 				pp995: {
 					regex: /{pp99\.5}/g,
-					text: `${message.pps["99.5"]}`,
+					text: `${message.pps["pp99.5"]}`,
 				},
 				pp98: {
 					regex: /{pp98}/g,
