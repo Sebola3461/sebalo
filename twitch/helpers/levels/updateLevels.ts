@@ -74,7 +74,15 @@ export function updateLevels(client: Client) {
 				channel_level.level++;
 				channel_level.next_level_xp += channel_level.xp * 1.5;
 
-				client
+				const channel_level_index = user.levels.findIndex(
+					(l: any) => l == channel_level
+				);
+
+				user.levels[channel_level_index] = channel_level;
+
+				await twitchUsers.findByIdAndUpdate(user._id, user);
+
+				return client
 					.action(
 						channel,
 						`${user.username} has advanced to level ${channel_level.level}!`
@@ -83,14 +91,6 @@ export function updateLevels(client: Client) {
 						console.log(e);
 					});
 			}
-
-			const channel_level_index = user.levels.findIndex(
-				(l: any) => l == channel_level
-			);
-
-			user.levels[channel_level_index] = channel_level;
-
-			await twitchUsers.findByIdAndUpdate(user._id, user);
 
 			return void {};
 		}
