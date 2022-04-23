@@ -57,10 +57,12 @@ export default async (beatmap: Beatmap, mods: string, with_url?: boolean) => {
 	function calculatePerformance() {
 		performance.forEach(
 			(p: { acc?: number; score?: number; pp: number }, i) => {
+				console.log(p.acc);
+
 				if (map_mode != "mania") {
 					pps[`pp${p.acc}`] = `${p.acc}%: ${p.pp}`;
 				} else {
-					const accs = ["100", "99.5", "99", "98", "95"];
+					const accs = ["1mi", "950k", "900k", "800k", "700k"];
 
 					pps[`pp${accs[i]}`] = `${accs[i]}: ${p.pp}pp`;
 				}

@@ -33,7 +33,10 @@ export async function updateLevels(
 
 	let user = await twitchUsers.findById(tags["user-id"]);
 
-	if (user == null) user = await createNewTwitchUser(tags);
+	if (user == null) {
+		user = await createNewTwitchUser(tags);
+		await createLevelObjectFor(tags, channel, message);
+	}
 
 	let streamer = (await users.find()).filter(
 		(u: any) => u.twitch.channel == channel.slice(1)
