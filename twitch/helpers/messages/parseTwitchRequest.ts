@@ -157,8 +157,28 @@ export default async (
 						text: `${tags["display-name"]}`,
 					},
 					beatmap: {
-						regex: /{beatmap}/g,
-						text: `${message.text}`,
+						regex: /{beatmap_url}/g,
+						text: `${message.metadata}`,
+					},
+					attributes: {
+						regex: /{attributes}/g,
+						text: `${message.extras}`,
+					},
+					pp100: {
+						regex: /{pp100}/g,
+						text: `${message.pps.pp100}`,
+					},
+					pp99: {
+						regex: /{pp99}/g,
+						text: `${message.pps.pp99}`,
+					},
+					pp98: {
+						regex: /{pp98}/g,
+						text: `${message.pps.pp98}`,
+					},
+					pp95: {
+						regex: /{pp95}/g,
+						text: `${message.pps.pp95}`,
 					},
 					separator: {
 						regex: /{separator}/g,
@@ -318,8 +338,28 @@ export default async (
 					text: `${tags["display-name"]}`,
 				},
 				beatmap: {
-					regex: /{beatmap}/g,
-					text: `${message.text}`,
+					regex: /{beatmap_url}/g,
+					text: `${message.metadata}`,
+				},
+				attributes: {
+					regex: /{attributes}/g,
+					text: `${message.extras}`,
+				},
+				pp100: {
+					regex: /{pp100}/g,
+					text: `${message.pps.pp100}`,
+				},
+				pp99: {
+					regex: /{pp99}/g,
+					text: `${message.pps.pp99}`,
+				},
+				pp98: {
+					regex: /{pp98}/g,
+					text: `${message.pps.pp98}`,
+				},
+				pp95: {
+					regex: /{pp95}/g,
+					text: `${message.pps.pp95}`,
 				},
 				separator: {
 					regex: /{separator}/g,

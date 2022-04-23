@@ -28,7 +28,8 @@ export default new Schema({
 				invalid_status:
 					"The streamer only accept {beatmap_status} beatmaps.",
 				bad_sr: "The streamer does not accept this sr (min: {sr_min} {separator} max: {sr_max}).",
-				request: "{username} {separator}{separator} {mode} {beatmap}",
+				request:
+					"{username} || {mode} {beatmap_url} | {attributes} | {pp100} • {pp99} • {pp98} • {pp95}",
 			},
 			modes: [0, 1, 2, 3],
 			blacklist: [],

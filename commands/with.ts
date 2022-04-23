@@ -97,10 +97,6 @@ export default async (pm: PrivateMessage, args: string[], user: any) => {
 		extras = calculateExtras(performance[0].att);
 	}
 
-	if (beatmap.data.mode == "fruits") {
-		extras = calculateCTBExtras(beatmap.data.accuracy, beatmap.data.ar);
-	}
-
 	if (performance[0].att.mods.acronyms.join("") == "NM")
 		return pm.user.sendMessage(
 			"Invalid mods provided! Press esc -> f1 to see a list of avaliable mods for this gamemode."

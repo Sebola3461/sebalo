@@ -74,6 +74,7 @@ export default async (
 		results.push({
 			acc: acc,
 			pp: Math.round(totalPerformance),
+			beatmap: beatmap_ruleset,
 			att: DifficultyAttributes,
 		});
 	});

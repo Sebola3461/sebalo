@@ -67,10 +67,6 @@ export default async (beatmap: Beatmap, mods: string, with_url?: boolean) => {
 		extras = calculateExtras(performance[0].att);
 	}
 
-	if (beatmap.mode == "fruits") {
-		extras = calculateCTBExtras(beatmap.accuracy, beatmap.ar);
-	}
-
 	const metadata = with_url
 		? `[https://osu.ppy.sh/b/${beatmap.id} ${beatmap.beatmapset?.artist} - ${beatmap.beatmapset?.title} [${beatmap.version}]]`
 		: `${beatmap.beatmapset?.artist} - ${beatmap.beatmapset?.title} [${beatmap.version}]`;

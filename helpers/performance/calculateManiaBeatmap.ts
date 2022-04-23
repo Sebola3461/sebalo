@@ -88,6 +88,7 @@ export default async (
 		return results.push({
 			score: score,
 			pp: Math.round(pp),
+			beatmap: beatmap_ruleset,
 			att: DifficultyAttributes,
 		});
 	});
