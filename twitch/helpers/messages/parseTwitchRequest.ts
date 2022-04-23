@@ -168,6 +168,10 @@ export default async (
 						regex: /{pp100}/g,
 						text: `${message.pps.pp100}`,
 					},
+					pp995: {
+						regex: /{pp99\.5}/g,
+						text: `${message.pps["99.5"]}`,
+					},
 					pp99: {
 						regex: /{pp99}/g,
 						text: `${message.pps.pp99}`,
@@ -352,6 +356,10 @@ export default async (
 				pp99: {
 					regex: /{pp99}/g,
 					text: `${message.pps.pp99}`,
+				},
+				pp995: {
+					regex: /{pp99\.5}/g,
+					text: `${message.pps["99.5"]}`,
 				},
 				pp98: {
 					regex: /{pp98}/g,

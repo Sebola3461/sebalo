@@ -35,7 +35,7 @@ export default async (
 
 	const DifficultyAttributes = Calculator.calculateWithMods(mods_combination);
 
-	const scores = [1000000, 900000, 800000, 700000];
+	const scores = [1000000, 950000, 900000, 800000, 700000];
 	const results: any[] = [];
 
 	scores.forEach((score) => {

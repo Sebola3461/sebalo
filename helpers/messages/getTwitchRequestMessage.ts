@@ -14,6 +14,7 @@ export default async (beatmap: Beatmap, mods: string, with_url?: boolean) => {
 
 	let pps: any = {
 		pp100: "",
+		"99.5": "",
 		pp99: "",
 		pp98: "",
 		pp95: "",
@@ -59,7 +60,7 @@ export default async (beatmap: Beatmap, mods: string, with_url?: boolean) => {
 				if (map_mode != "mania") {
 					pps[`pp${p.acc}`] = `${p.acc}%: ${p.pp}`;
 				} else {
-					const accs = ["100", "99", "98", "95"];
+					const accs = ["100", "99.5", "99", "98", "95"];
 
 					pps[`pp${accs[i]}`] = `${accs[i]}: ${p.pp}pp`;
 				}
@@ -94,17 +95,6 @@ export default async (beatmap: Beatmap, mods: string, with_url?: boolean) => {
 	const metadata = with_url
 		? `[https://osu.ppy.sh/b/${beatmap.id} ${beatmap.beatmapset?.artist} - ${beatmap.beatmapset?.title} [${beatmap.version}]]`
 		: `${beatmap.beatmapset?.artist} - ${beatmap.beatmapset?.title} [${beatmap.version}]`;
-
-	/**
-		 * ${metadata} (${
-			mods == "NM"
-				? beatmap.difficulty_rating.toFixed(2)
-				: performance[0].att.starRating.toFixed(2)
-		}★${mods == "NM" ? "" : ` +${mods}`})  {separator}  ${extras.replace(
-			"|",
-			"{separator}"
-		)}${pps}
-		 */
 
 	return {
 		pps: pps,
