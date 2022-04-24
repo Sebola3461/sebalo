@@ -359,7 +359,11 @@ export default async (
 				},
 				stars: {
 					regex: /{stars}/g,
-					text: `${message.att.starRating}`,
+					text: `${message.att.starRating.toFixed(2)}`,
+				},
+				mods: {
+					regex: /{mods}/g,
+					text: `${mods}`,
 				},
 				pp100: {
 					regex: /{pp100}/g,
