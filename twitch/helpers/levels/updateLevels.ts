@@ -59,8 +59,6 @@ export async function updateLevels(
 		return;
 	}
 
-	console.log(user);
-
 	// ? Level object index for this channel
 	let level_index = user.levels.findIndex((l: any) => l.channel == channel);
 
