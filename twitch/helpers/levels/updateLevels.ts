@@ -63,7 +63,7 @@ export async function updateLevels(
 	let level_index = user.levels.findIndex((l: any) => l.channel == channel);
 
 	// ? Check if the user have a level object in this channel
-	if (level_index < 0) {
+	if (level_index == -1) {
 		level_index = await createLevelObjectFor(tags, channel, message);
 
 		// ? Update current user object after add the level object

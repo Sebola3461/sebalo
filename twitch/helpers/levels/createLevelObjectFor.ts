@@ -6,6 +6,10 @@ export default async (
 	channel: string,
 	message: string
 ) => {
+	console.log(
+		`Creating level object for ${user_data.username} on ${channel}`
+	);
+
 	let user = await twitchUsers.findById(user_data.id);
 
 	if (user == null)
@@ -30,6 +34,10 @@ export default async (
 	await twitchUsers.findByIdAndUpdate(user._id, user);
 
 	const index = user.levels.findIndex((l: any) => l.channel == channel);
+
+	console.log(
+		`Level object for ${user_data.username} on ${channel} created!`
+	);
 
 	return index;
 };
