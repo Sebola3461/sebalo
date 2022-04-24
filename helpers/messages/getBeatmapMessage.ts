@@ -3,7 +3,11 @@ import calculateCatchBeatmap from "../performance/calculateCatchBeatmap";
 import calculateManiaBeatmap from "../performance/calculateManiaBeatmap";
 import calculateStandardBeatmap from "../performance/calculateStandardBeatmap";
 import calculateTaikoBeatmap from "../performance/calculateTaikoBeatmap";
-import calculateExtras, { calculateCTBExtras } from "./calculateExtras";
+import calculateExtras, {
+	calculateCTBExtras,
+	calculateManiaExtras,
+	calculateTaikoExtras,
+} from "./calculateExtras";
 
 export default async (beatmap: Beatmap, mods: string, with_url?: boolean) => {
 	let performance: any[] = [];
@@ -63,8 +67,26 @@ export default async (beatmap: Beatmap, mods: string, with_url?: boolean) => {
 
 	let extras = "";
 
-	if (beatmap.mode == "osu") {
-		extras = calculateExtras(performance[0].att);
+	switch (beatmap.mode) {
+		case "osu": {
+			extras = calculateExtras(performance[0].att);
+			break;
+		}
+		case "taiko": {
+			extras = calculateTaikoExtras(
+				performance[0].beatmap,
+				performance[0].att
+			);
+			break;
+		}
+		case "fruits": {
+			extras = calculateCTBExtras(performance[0].beatmap);
+			break;
+		}
+		case "mania": {
+			extras = calculateManiaExtras(performance[0].beatmap);
+			break;
+		}
 	}
 
 	const metadata = with_url
@@ -75,5 +97,5 @@ export default async (beatmap: Beatmap, mods: string, with_url?: boolean) => {
 		mods == "NM"
 			? beatmap.difficulty_rating.toFixed(2)
 			: performance[0].att.starRating.toFixed(2)
-	}★${mods == "NM" ? "" : ` +${mods}`})  |  ${extras}${pps}`;
+	}★${mods == "NM" ? "" : ` +${mods}`})  |  ${extras}  |  ${pps}`;
 };

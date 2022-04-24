@@ -5,16 +5,7 @@ import { CatchRuleset } from "osu-catch-stable";
 import { ScoreInfo, BeatmapInfo } from "osu-classes";
 import Accuracy from "./Accuracy";
 
-export default async (
-	beatmap: Beatmap,
-	mods?: string,
-	params?: {
-		n300: number;
-		n100: number;
-		n50: number;
-		n0: number;
-	}
-) => {
+export default async (beatmap: Beatmap, mods?: string, accs?: number[]) => {
 	const osu_file = await axios(`https://osu.ppy.sh/osu/${beatmap.id}`);
 
 	mods = mods ? mods : "NM";
@@ -33,7 +24,7 @@ export default async (
 
 	const DifficultyAttributes = Calculator.calculateWithMods(mods_combination);
 
-	const accuracies = [100, 99.5, 99, 98, 95];
+	const accuracies = accs ? accs : [100, 99.5, 99, 98, 95];
 	const results: any[] = [];
 
 	accuracies.forEach((acc) => {
@@ -42,21 +33,14 @@ export default async (
 		score.mods = mods_combination;
 		score.maxCombo = DifficultyAttributes.maxCombo;
 
-		if (params) {
-			score.statistics.great = params.n300;
-			score.statistics.ok = params.n100;
-			score.statistics.meh = 0;
-			score.statistics.miss = 0;
-		} else {
-			const hits = new Accuracy({
-				nobjects: parsed.hitObjects.length,
-				percent: acc,
-			});
-			score.statistics.great = hits.n300;
-			score.statistics.ok = hits.n100;
-			score.statistics.meh = 0;
-			score.statistics.miss = 0;
-		}
+		const hits = new Accuracy({
+			nobjects: parsed.hitObjects.length,
+			percent: acc,
+		});
+		score.statistics.great = hits.n300;
+		score.statistics.ok = hits.n100;
+		score.statistics.meh = 0;
+		score.statistics.miss = 0;
 
 		score.accuracy =
 			(score.statistics.great + score.statistics.ok / 2) /

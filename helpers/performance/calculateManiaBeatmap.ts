@@ -5,18 +5,7 @@ import { ManiaRuleset } from "osu-mania-stable";
 import { ScoreInfo, BeatmapInfo } from "osu-classes";
 import Accuracy from "./Accuracy";
 
-export default async (
-	beatmap: Beatmap,
-	mods?: string,
-	params?: {
-		n320: number;
-		n300: number;
-		n200: number;
-		n100: number;
-		n50: number;
-		n0: number;
-	}
-) => {
+export default async (beatmap: Beatmap, mods?: string, _scores?: number[]) => {
 	const osu_file = await axios(`https://osu.ppy.sh/osu/${beatmap.id}`);
 
 	mods = mods ? mods : "NM";
@@ -35,7 +24,9 @@ export default async (
 
 	const DifficultyAttributes = Calculator.calculateWithMods(mods_combination);
 
-	const scores = [1000000, 950000, 900000, 800000, 700000];
+	const scores = _scores
+		? _scores
+		: [1000000, 950000, 900000, 800000, 700000];
 	const results: any[] = [];
 
 	scores.forEach((score) => {
