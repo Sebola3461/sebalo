@@ -162,7 +162,7 @@ export default async (
 					},
 					mods: {
 						regex: /{mods}/g,
-						text: `${mods != "NM" ? `+${mods}` : ""}`,
+						text: `${mods != "NM" ? ` +${mods}` : ""}`,
 					},
 					stars: {
 						regex: /{stars}/g,
