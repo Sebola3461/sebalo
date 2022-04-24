@@ -166,7 +166,7 @@ export default async (
 					},
 					stars: {
 						regex: /{stars}/g,
-						text: `${message.att.starRating}`,
+						text: `${message.att.starRating.starRating.toFixed(2)}`,
 					},
 					attributes: {
 						regex: /{attributes}/g,
