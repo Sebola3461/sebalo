@@ -162,7 +162,7 @@ export default async (
 					},
 					mods: {
 						regex: /{mods}/g,
-						text: `${mods}`,
+						text: `${mods != "NM" ? `+${mods}` : ""}`,
 					},
 					stars: {
 						regex: /{stars}/g,
@@ -363,7 +363,7 @@ export default async (
 				},
 				mods: {
 					regex: /{mods}/g,
-					text: `${mods}`,
+					text: `${mods != "NM" ? `+${mods}` : ""}`,
 				},
 				pp100: {
 					regex: /{pp100}/g,
