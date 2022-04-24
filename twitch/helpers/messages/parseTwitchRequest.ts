@@ -23,6 +23,21 @@ export default async (
 		(u) => u.twitch.channel == channel.slice(1)
 	)[0];
 
+	if (!db_channel) {
+		console.log(`Channel ${channel} does not exist. Sending help`);
+
+		return client
+			.say(
+				channel,
+				`The streamer does not exist in my database! @${channel.slice(
+					1
+				)} need to run a command here: https://osu.ppy.sh/community/chat?sendto=15821708 to sync again.`
+			)
+			.catch((e) => {
+				console.log(e);
+			});
+	}
+
 	if (db_channel.twitch_options.blacklist.includes(tags.username)) return;
 
 	if (db_channel.twitch_options.pause)
