@@ -10,7 +10,7 @@ export default async (
 		`Creating level object for ${user_data.username} on ${channel}`
 	);
 
-	let user = await twitchUsers.findById(user_data.id);
+	let user = await twitchUsers.findById(user_data["user-id"]);
 
 	if (user == null)
 		return {
