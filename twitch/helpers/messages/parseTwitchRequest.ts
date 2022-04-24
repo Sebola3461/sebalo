@@ -160,6 +160,14 @@ export default async (
 						regex: /{beatmap_url}/g,
 						text: `${message.metadata}`,
 					},
+					mods: {
+						regex: /{mods}/g,
+						text: `${mods}`,
+					},
+					stars: {
+						regex: /{stars}/g,
+						text: `${message.att.starRating}`,
+					},
 					attributes: {
 						regex: /{attributes}/g,
 						text: `${message.extras}`,
@@ -348,6 +356,10 @@ export default async (
 				attributes: {
 					regex: /{attributes}/g,
 					text: `${message.extras}`,
+				},
+				stars: {
+					regex: /{stars}/g,
+					text: `${message.att.starRating}`,
 				},
 				pp100: {
 					regex: /{pp100}/g,

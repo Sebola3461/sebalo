@@ -10,9 +10,16 @@ export default async (pm: PrivateMessage, args: string[], user: any) => {
 
 	switch (args[0]) {
 		case "link": {
-			pm.user.sendMessage(
-				`Click [https://osu.ppy.sh/oauth/authorize?response_type=code&redirect_uri=https://sebola-twitch-authorization.herokuapp.com/osu&client_id=14230 here] to enable twitch beatmap requests`
-			);
+			await pm.user
+				.sendMessage(
+					`Click [https://osu.ppy.sh/oauth/authorize?response_type=code&redirect_uri=https://sebola-twitch-authorization.herokuapp.com/osu&client_id=14230 here] to enable twitch beatmap requests`
+				)
+				.then((d) => {
+					console.log(d);
+				})
+				.catch((e) => {
+					console.error(e);
+				});
 
 			break;
 		}
@@ -31,7 +38,7 @@ export default async (pm: PrivateMessage, args: string[], user: any) => {
 	}
 
 	console.log(
-		`${new Date().toLocaleDateString("pt-BR")} | twitch help sended for ${
+		`${new Date().toLocaleDateString("pt-BR")} | twitch help sent for ${
 			user.username
 		} (${user.id})`
 	);
