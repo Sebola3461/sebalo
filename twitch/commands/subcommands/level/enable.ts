@@ -31,6 +31,8 @@ export default async (
 
 	db_channel.twitch_options.levels_enable = true;
 
+	await users.findByIdAndUpdate(db_channel._id, db_channel);
+
 	return client
 		.say(
 			channel,
