@@ -5,6 +5,7 @@ import getChannelUsers from "../channel/getChannelUsers";
 import calculatePointsFor from "./calculatePointsFor";
 import checkBlacklistedLevel from "./checkBlacklistedLevel";
 import createLevelObjectFor from "./createLevelObjectFor";
+import checkLevelDups from "./checkLevelDups";
 import dotenv, { config } from "dotenv";
 dotenv.config();
 
@@ -49,6 +50,11 @@ export async function updateLevels(
 
 	if (!streamer) return;
 
+	if (streamer.twitch_options.levels_enable == false)
+		return console.log(
+			`Skipping ${tags.username} in ${channel} cuz levels are disabled...`
+		);
+
 	if (streamer.twitch_options.blacklist.includes(tags.username)) {
 		console.log(
 			`Skipping ${tags.username} in ${channel} cuz its blacklisted...`
@@ -71,6 +77,8 @@ export async function updateLevels(
 	}
 
 	await calculatePointsFor(client, tags, channel, user, level_index, message);
+
+	await checkLevelDups(tags, channel, message);
 
 	console.log(`Levels for user ${tags.username} in ${channel} updated!`);
 }

@@ -17,6 +17,7 @@ export default new Schema({
 		default: {
 			separator: "|",
 			pause: false,
+			levels_enable: true,
 			sr: {
 				min_sr: 0,
 				max_sr: 10,

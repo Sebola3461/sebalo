@@ -1,6 +1,8 @@
 import { BanchoClient } from "bancho.js";
 import { ChatUserstate, Client } from "tmi.js";
-import { twitchUsers } from "../../database";
+import { twitchUsers, users } from "../../database";
+import disable from "./subcommands/level/disable";
+import enable from "./subcommands/level/enable";
 
 export default async (
 	message: string,
@@ -10,63 +12,111 @@ export default async (
 	client: Client,
 	args: string[]
 ) => {
-	const user = await twitchUsers.findById(tags["user-id"]);
+	switch (args[0]) {
+		case "disable": {
+			if (tags.username == channel.slice(1)) {
+				disable(message, tags, channel, bancho, client, args);
 
-	const all_users = await twitchUsers.find();
-	const channel_users: any[] = [];
+				break;
+			} else {
+				client
+					.say(
+						channel,
+						`@${tags["display-name"]}: Invalid permissions.`
+					)
+					.catch((e) => {
+						console.log(e);
+					});
 
-	all_users.forEach((user) => {
-		user.levels.forEach((l: any) => {
-			if (l.channel == channel) {
-				l.username = user.username;
-
-				channel_users.push(l);
+				break;
 			}
-		});
-	});
+		}
+		case "enable": {
+			if (tags.username == channel.slice(1)) {
+				enable(message, tags, channel, bancho, client, args);
 
-	channel_users.sort((a: any, b: any) => {
-		return b.xp - a.xp;
-	});
+				break;
+			} else {
+				client
+					.say(
+						channel,
+						`@${tags["display-name"]}: Invalid permissions.`
+					)
+					.catch((e) => {
+						console.log(e);
+					});
 
-	if (user == null)
-		return client
-			.say(
-				channel,
-				`@${tags.username} Wait... You don't exist in my database, wait some seconds and try again.`
-			)
-			.catch((e) => {
-				console.log(e);
+				break;
+			}
+		}
+		default: {
+			const db_channel = (await users.find()).find(
+				(u) => u.twitch.channel == channel.slice(1)
+			);
+
+			if (!db_channel)
+				return client.say(channel, "Streamer not registred!");
+
+			if (db_channel.twitch_options.levels_enable == false)
+				return client.say(channel, "Levels are disabled here!");
+
+			const user = await twitchUsers.findById(tags["user-id"]);
+
+			const all_users = await twitchUsers.find();
+			const channel_users: any[] = [];
+
+			all_users.forEach((user) => {
+				user.levels.forEach((l: any) => {
+					if (l.channel == channel) {
+						l.username = user.username;
+
+						channel_users.push(l);
+					}
+				});
 			});
 
-	const level = user.levels.filter((l: any) => l.channel == channel)[0];
-
-	if (!level)
-		return client
-			.say(channel, `@${tags.username} [#0] Level 0, Xp: 0 | Next: 0/120`)
-			.catch((e) => {
-				console.log(e);
+			channel_users.sort((a: any, b: any) => {
+				return b.xp - a.xp;
 			});
 
-	const username = args[0] || tags.username;
+			if (user == null)
+				return client
+					.say(
+						channel,
+						`@${tags.username} Wait... You don't exist in my database, wait some seconds and try again.`
+					)
+					.catch((e) => {
+						console.log(e);
+					});
 
-	const user_rank = channel_users.findIndex((l) => l.username == username);
+			const level = user.levels.filter(
+				(l: any) => l.channel == channel
+			)[0];
 
-	if (user_rank == -1)
-		return client
-			.say(channel, `@${tags.username}: User not found!`)
-			.catch((e) => {
-				console.log(e);
-			});
+			if (!level)
+				return client
+					.say(
+						channel,
+						`@${tags.username} [#0] Level 0, Xp: 0 | Next: 0/120`
+					)
+					.catch((e) => {
+						console.log(e);
+					});
 
-	return client
-		.say(
-			channel,
-			`${username}: [#${user_rank + 1}] Level ${level.level}, Xp: ${
-				level.xp
-			} | Next: ${level.xp}/${level.next_level_xp}`
-		)
-		.catch((e) => {
-			console.log(e);
-		});
+			return client
+				.say(
+					channel,
+					`${tags["display-name"]}: [#${level.level + 1}] Level ${
+						level.level
+					}, Xp: ${level.xp} | Next: ${level.xp}/${
+						level.next_level_xp
+					}`
+				)
+				.catch((e) => {
+					console.log(e);
+				});
+
+			break;
+		}
+	}
 };
