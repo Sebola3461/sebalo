@@ -93,6 +93,10 @@ export default async (
 				(l: any) => l.channel == channel
 			)[0];
 
+			const rank =
+				channel_users.findIndex(() => user.username == tags.username) +
+				1;
+
 			if (!level)
 				return client
 					.say(
@@ -106,11 +110,7 @@ export default async (
 			return client
 				.say(
 					channel,
-					`${tags["display-name"]}: [#${level.level + 1}] Level ${
-						level.level
-					}, Xp: ${level.xp} | Next: ${level.xp}/${
-						level.next_level_xp
-					}`
+					`${tags["display-name"]}: [#${rank}] Level ${level.level}, Xp: ${level.xp} | Next: ${level.xp}/${level.next_level_xp}`
 				)
 				.catch((e) => {
 					console.log(e);
