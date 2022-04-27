@@ -32,7 +32,10 @@ export default async (
 	db_channel.twitch_options.levels_enable = false;
 
 	return client
-		.say(channel, `@${tags["display-name"]}: Done! Levels disabled here!.`)
+		.say(
+			channel,
+			`@${tags["display-name"]}: Done! Levels are disabled here!`
+		)
 		.catch((e) => {
 			console.log(e);
 		});
