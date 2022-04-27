@@ -12,6 +12,15 @@ export default new Schema({
 			id: "",
 		},
 	},
+	now_playing: {
+		type: Object,
+		default: {
+			beatmapset_id: -1,
+			beatmap_id: -1,
+			title: "",
+			artist: "",
+		},
+	},
 	twitch_options: {
 		type: Object,
 		default: {

@@ -52,7 +52,7 @@ export async function twitchClient(bancho: BanchoClient) {
 		}
 
 		client.on("message", async (channel, tags, message, self) => {
-			if (self) return;
+			if (tags.username == process.env.TWITCH_LOGIN) return;
 
 			if (
 				message.includes("https://osu.ppy.sh/") &&
