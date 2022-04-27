@@ -111,7 +111,7 @@ export default async (pm: PrivateMessage, args: string[], user: any) => {
 				: performance[0].att.starRating.toFixed(2)
 		}★${
 			mods == "NM" ? "" : ` +${performance[0].att.mods.acronyms.join("")}`
-		})  |  ${extras}${pps}`
+		})  |  ${extras}  |  ${pps}`
 	);
 
 	console.log(
