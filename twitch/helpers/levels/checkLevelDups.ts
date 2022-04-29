@@ -1,45 +1,35 @@
 import { ChatUserstate } from "tmi.js";
 import { twitchUsers } from "../../../database";
 
-export default async (
-	user_data: ChatUserstate,
-	channel: string,
-	message: string
-) => {
-	console.log(`Checking dups for ${user_data.username} on ${channel}`);
-
-	let user = await twitchUsers.findById(user_data["user-id"]);
-
-	if (user == null)
-		return {
-			status: 403,
-			message: "This user doesnt exist in the database.",
-		};
+export default async (channel: string) => {
+	console.log(`Checking dups for ${channel}`);
 
 	// ? Add level object to user
-	const levels = user.levels.filter((l: any) => {
-		l.channel == channel;
+	const levels = (await twitchUsers.find()).filter((u: any) => {
+		return u.levels.filter((l: any) => l.channel == channel).length > 1;
 	});
 
-	if (levels.length > 1) {
-		const index = user.levels.findIndex((l: any) => {
-			l.channel == channel;
+	levels.forEach(async (u) => {
+		const index = u.levels.findIndex((l: any) => {
+			return l.channel == channel;
 		});
 
-		user.levels.splice(index, levels.length - 1);
+		const user_levels = u.levels.filter((l: any) => {
+			return l.channel == channel;
+		});
+
+		user_levels.sort((a: { xp: number }, b: { xp: number }) => a.xp - b.xp);
+
+		u.levels.splice(index, user_levels.length - 1);
 
 		console.log(
-			`Removed ${levels.length - 1} dups for ${
-				user_data.username
+			`Removed ${user_levels.length - 1} dups for ${
+				u.username
 			} on ${channel}!`
 		);
-	}
 
-	await twitchUsers.findByIdAndUpdate(user._id, user);
+		await twitchUsers.findByIdAndUpdate(u._id, u);
+	});
 
-	const index = user.levels.findIndex((l: any) => l.channel == channel);
-
-	console.log(`Dups checked for ${user_data.username} on ${channel}!`);
-
-	return index;
+	console.log(`Dups checked for ${channel}!`);
 };

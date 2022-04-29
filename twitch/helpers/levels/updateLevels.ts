@@ -25,6 +25,8 @@ export async function updateLevels(
 		);
 	}
 
+	await checkLevelDups(channel);
+
 	const chat_users = await getChannelUsers(channel.slice(1));
 
 	if (chat_users.chatters.broadcaster.length != 1) {
@@ -77,8 +79,6 @@ export async function updateLevels(
 	}
 
 	await calculatePointsFor(client, tags, channel, user, level_index, message);
-
-	await checkLevelDups(tags, channel, message);
 
 	console.log(`Levels for user ${tags.username} in ${channel} updated!`);
 }
