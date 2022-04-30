@@ -89,13 +89,10 @@ export default async (
 						console.log(e);
 					});
 
-			const level = user.levels.filter(
-				(l: any) => l.channel == channel
-			)[0];
+			const level = user.levels.find((l: any) => l.channel == channel);
 
 			const rank =
-				channel_users.findIndex(() => user.username == tags.username) +
-				1;
+				channel_users.findIndex((u) => u.username == tags.username) + 1;
 
 			if (!level)
 				return client
