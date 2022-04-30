@@ -50,6 +50,7 @@ export default new Schema({
 				"pending",
 				"loved",
 				"qualified",
+				"approved",
 			],
 		},
 	},
