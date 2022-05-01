@@ -2,6 +2,8 @@ import mongoose from "mongoose";
 import user from "./schemas/user";
 import dotenv from "dotenv";
 import twitchUser from "./schemas/twitchUser";
+import axios from "axios";
+import channels from "./schemas/channels";
 dotenv.config();
 
 console.log("database", "Starting databse connection...");
@@ -21,3 +23,4 @@ mongoose.connect(
 
 export const users = mongoose.model("Users", user);
 export const twitchUsers = mongoose.model("TwitchUsers", twitchUser);
+export const twitchChannels = mongoose.model("Channels", channels);

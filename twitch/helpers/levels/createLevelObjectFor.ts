@@ -1,5 +1,5 @@
 import { ChatUserstate } from "tmi.js";
-import { twitchUsers } from "../../../database";
+import { twitchChannels, twitchUsers } from "../../../database";
 
 export default async (
 	user_data: ChatUserstate,
@@ -10,9 +10,11 @@ export default async (
 		`Creating level object for ${user_data.username} on ${channel}`
 	);
 
-	let user = await twitchUsers.findById(user_data["user-id"]);
+	let db_channel = await twitchChannels.findOne({
+		username: channel.slice(1),
+	});
 
-	if (user == null)
+	if (db_channel == null)
 		return {
 			status: 403,
 			message: "This user doesnt exist in the database.",
@@ -28,12 +30,29 @@ export default async (
 		last_message_date: new Date(),
 	};
 
+	// ? If exists, fallback
+	if (
+		db_channel.levels.users.findIndex(
+			(l: any) => l.user == user_data.username
+		) != -1
+	)
+		return db_channel.levels.users.findIndex(
+			(l: any) => l.user == user_data.username
+		);
+
 	// ? Add level object to user
-	user.levels.push(new_level);
+	db_channel.levels.users.push(new_level);
 
-	await twitchUsers.findByIdAndUpdate(user._id, user);
+	await twitchChannels.findOneAndUpdate(
+		{
+			username: channel.slice(1),
+		},
+		db_channel
+	);
 
-	const index = user.levels.findIndex((l: any) => l.channel == channel);
+	const index = db_channel.levels.users.findIndex(
+		(l: any) => l.user == user_data.username
+	);
 
 	console.log(
 		`Level object for ${user_data.username} on ${channel} created!`

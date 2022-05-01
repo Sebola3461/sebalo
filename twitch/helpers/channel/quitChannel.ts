@@ -1,11 +1,11 @@
 import { Client } from "tmi.js";
-import { users } from "../../../database";
+import { twitchChannels, users } from "../../../database";
 
 export default async (channel: string, client: Client) => {
 	console.log(channel);
-	const user = (await users.find()).filter(
-		(u) => u.twitch.channel == channel
-	)[0];
+	const user = await twitchChannels.findOne({
+		username: channel.slice(1),
+	});
 
 	if (!user) return;
 
@@ -17,7 +17,12 @@ export default async (channel: string, client: Client) => {
 		id: "",
 	};
 
-	await users.findByIdAndUpdate(user._id, user);
+	await twitchChannels.findOneAndUpdate(
+		{
+			username: channel.slice(1),
+		},
+		user
+	);
 
 	console.log(`Bye ${channel}`);
 

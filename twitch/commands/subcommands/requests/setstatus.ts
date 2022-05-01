@@ -1,6 +1,6 @@
 import { BanchoClient } from "bancho.js";
 import { ChatUserstate, Client } from "tmi.js";
-import { users } from "../../../../database";
+import { twitchChannels, users } from "../../../../database";
 
 export default async (
 	message: string,
@@ -10,9 +10,9 @@ export default async (
 	client: Client,
 	args: string[]
 ) => {
-	const db_channel = (await users.find()).filter(
-		(u) => u.twitch.channel == channel.slice(1)
-	)[0];
+	const db_channel = await twitchChannels.findOne({
+		username: channel.slice(1),
+	});
 
 	if (!db_channel)
 		return client.say(channel, "User not found.").catch((e) => {
@@ -26,6 +26,7 @@ export default async (
 		"pending",
 		"loved",
 		"qualified",
+		"approved",
 	];
 
 	args.shift();
@@ -55,9 +56,14 @@ export default async (
 				console.log(e);
 			});
 
-	db_channel.twitch_options.status = new_status;
+	db_channel.requests.status = new_status;
 
-	await users.findByIdAndUpdate(db_channel._id, db_channel);
+	await twitchChannels.findOneAndUpdate(
+		{
+			username: channel.slice(1),
+		},
+		db_channel
+	);
 
 	return client
 		.say(

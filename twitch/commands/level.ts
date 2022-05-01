@@ -1,6 +1,6 @@
 import { BanchoClient } from "bancho.js";
 import { ChatUserstate, Client } from "tmi.js";
-import { twitchUsers, users } from "../../database";
+import { twitchChannels, twitchUsers, users } from "../../database";
 import disable from "./subcommands/level/disable";
 import enable from "./subcommands/level/enable";
 
@@ -50,32 +50,19 @@ export default async (
 			}
 		}
 		default: {
-			const db_channel = (await users.find()).find(
-				(u) => u.twitch.channel == channel.slice(1)
-			);
+			const db_channel = await twitchChannels.findOne({
+				username: channel.slice(1),
+			});
 
 			if (!db_channel)
 				return client.say(channel, "Streamer not registred!");
 
-			if (db_channel.twitch_options.levels_enable == false)
+			if (db_channel.levels.enable == false)
 				return client.say(channel, "Levels are disabled here!");
 
 			const user = await twitchUsers.findById(tags["user-id"]);
 
-			const all_users = await twitchUsers.find();
-			const channel_users: any[] = [];
-
-			all_users.forEach((user) => {
-				user.levels.forEach((l: any) => {
-					if (l.channel == channel) {
-						l.username = user.username;
-
-						channel_users.push(l);
-					}
-				});
-			});
-
-			channel_users.sort((a: any, b: any) => {
+			db_channel.levels.users.sort((a: any, b: any) => {
 				return b.xp - a.xp;
 			});
 
@@ -89,16 +76,20 @@ export default async (
 						console.log(e);
 					});
 
-			const level = user.levels.find((l: any) => l.channel == channel);
+			const level = db_channel.levels.users.find(
+				(l: any) => l.user == tags.username
+			);
 
 			const rank =
-				channel_users.findIndex((u) => u.username == tags.username) + 1;
+				db_channel.levels.users.findIndex(
+					(u: any) => u.user == tags.username
+				) + 1;
 
 			if (!level)
 				return client
 					.say(
 						channel,
-						`@${tags.username} [#0] Level 0, Xp: 0 | Next: 0/120`
+						`@${tags.username} [#0] Level: 0, Xp: 0 | Next: 0/120`
 					)
 					.catch((e) => {
 						console.log(e);
@@ -107,7 +98,7 @@ export default async (
 			return client
 				.say(
 					channel,
-					`${tags["display-name"]}: [#${rank}] Level ${level.level}, Xp: ${level.xp} | Next: ${level.xp}/${level.next_level_xp}`
+					`${tags["display-name"]}: [#${rank}] Level: ${level.level}, Xp: ${level.xp} | Next: ${level.xp}/${level.next_level_xp}`
 				)
 				.catch((e) => {
 					console.log(e);

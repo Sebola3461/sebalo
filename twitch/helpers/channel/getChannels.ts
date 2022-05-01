@@ -1,14 +1,12 @@
-import { users } from "../../../database";
+import { twitchChannels } from "../../../database";
 
 export default async () => {
-	const db = (await users.find()).filter((u) => {
-		return u.twitch.channel != "";
-	});
+	const db = await twitchChannels.find();
 
 	const channels: string[] = [];
 
 	db.forEach((u) => {
-		channels.push(u.twitch.channel);
+		channels.push(u.username);
 	});
 
 	return channels;

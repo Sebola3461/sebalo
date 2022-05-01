@@ -1,7 +1,7 @@
 import { ChatUserstate, Client } from "tmi.js";
 import "colors";
 import calculateDate from "./calculateDate";
-import { twitchUsers } from "../../../database";
+import { twitchChannels, twitchUsers } from "../../../database";
 
 export default async (
 	client: Client,
@@ -17,7 +17,7 @@ export default async (
 		} ${`Calculating points for user ${tags.username} in ${channel}`}`
 	);
 
-	let level = user.levels[level_index];
+	let level = user.levels.users[level_index];
 
 	if (!level) {
 		console.log(
@@ -81,9 +81,9 @@ export default async (
 		level.next_level_xp += level.xp * 1.5;
 		level.last_update = new Date();
 
-		user.levels[level_index] = level;
+		user.levels.users[level_index] = level;
 
-		await twitchUsers.findByIdAndUpdate(user._id, user);
+		await twitchChannels.findByIdAndUpdate(user._id, user);
 
 		client.action(
 			channel,
@@ -94,8 +94,8 @@ export default async (
 			`User ${tags.username} in ${channel} has advanced to level ${level.level}/${level.xp}!`
 		);
 	} else {
-		user.levels[level_index] = level;
-		await twitchUsers.findByIdAndUpdate(user._id, user);
+		user.levels.users[level_index] = level;
+		await twitchChannels.findByIdAndUpdate(user._id, user);
 	}
 
 	console.log(`Points for user ${tags.username} in ${channel} calculated!`);

@@ -1,19 +1,28 @@
-import { ChatUserstate, Client } from "tmi.js";
+import { ChatUserstate } from "tmi.js";
 import "colors";
-import { twitchUsers } from "../../../database";
+import { twitchChannels } from "../../../database";
 
 export default async (tags: ChatUserstate, channel: string) => {
-	let user = await twitchUsers.findById(tags["user-id"]);
+	let db_channel = await twitchChannels.findOne({
+		username: channel.slice(1),
+	});
 
-	if (user == null) return;
+	if (db_channel == null) return;
 
-	const level = user.levels.findIndex((l: any) => l.channel == channel);
+	const level = db_channel.levels.users.findIndex(
+		(l: any) => l.user == tags.username
+	);
 
-	if (level < 0) return;
+	if (level == -1) return;
 
-	user.levels.splice(level, 1);
+	db_channel.levels.users.splice(level, 1);
 
-	await twitchUsers.findByIdAndUpdate(tags["user-id"], user);
+	await twitchChannels.findOneAndUpdate(
+		{
+			username: channel.slice(1),
+		},
+		db_channel
+	);
 
 	return void {};
 };

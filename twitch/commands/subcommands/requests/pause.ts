@@ -1,6 +1,6 @@
 import { BanchoClient } from "bancho.js";
 import { ChatUserstate, Client } from "tmi.js";
-import { users } from "../../../../database";
+import { twitchChannels, users } from "../../../../database";
 
 export default async (
 	message: string,
@@ -9,13 +9,13 @@ export default async (
 	bancho: BanchoClient,
 	client: Client
 ) => {
-	const db_channel = (await users.find()).filter(
-		(u) => u.twitch.channel == channel.slice(1)
-	)[0];
+	const db_channel = await twitchChannels.findOne({
+		username: channel.slice(1),
+	});
 
 	if (!db_channel) return client.say(channel, "User not found.");
 
-	if (db_channel.twitch_options.pause == true)
+	if (db_channel.requests.pause == true)
 		return client
 			.say(
 				channel,
@@ -25,9 +25,14 @@ export default async (
 				console.log(e);
 			});
 
-	db_channel.twitch_options.pause = true;
+	db_channel.requests.pause = true;
 
-	await users.findByIdAndUpdate(db_channel._id, db_channel);
+	await twitchChannels.findOneAndUpdate(
+		{
+			username: channel.slice(1),
+		},
+		db_channel
+	);
 
 	return client
 		.say(channel, `@${tags["display-name"]}: Requests paused!`)

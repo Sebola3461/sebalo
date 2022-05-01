@@ -1,6 +1,6 @@
 import { BanchoClient } from "bancho.js";
 import { ChatUserstate, Client } from "tmi.js";
-import { users } from "../../../database";
+import { twitchChannels, users } from "../../../database";
 import fetchBeatmap, {
 	fetchBeatmapset,
 } from "../../../helpers/fetcher/fetchBeatmap";
@@ -19,9 +19,9 @@ export default async (
 ) => {
 	let url = "";
 
-	const db_channel = (await users.find()).filter(
-		(u) => u.twitch.channel == channel.slice(1)
-	)[0];
+	const db_channel = await twitchChannels.findOne({
+		username: channel.slice(1),
+	});
 
 	if (!db_channel) {
 		console.log(`Channel ${channel} does not exist. Sending help`);
@@ -38,10 +38,10 @@ export default async (
 			});
 	}
 
-	if (db_channel.twitch_options.blacklist.includes(tags.username)) return;
+	if (db_channel.requests.blacklist.includes(tags.username)) return;
 
-	if (db_channel.twitch_options.pause)
-		return client.say(channel, db_channel.twitch_options.messages.paused);
+	if (db_channel.requests.pause)
+		return client.say(channel, db_channel.requests.messages.paused);
 
 	const mods = (
 		(message.split(" ").pop()?.startsWith("+")
@@ -76,7 +76,7 @@ export default async (
 
 		if (!beatmap.data) return;
 
-		const user = await fetchUser(db_channel.id);
+		const user = await fetchUser(db_channel.osu_id);
 
 		if (!user.data) return;
 
@@ -86,34 +86,27 @@ export default async (
 
 		if (
 			Number(message.att.starRating.toFixed(2)) <
-				db_channel.twitch_options.sr.min_sr ||
+				db_channel.requests.sr.min_sr ||
 			Number(message.att.starRating.toFixed(2)) >
-				db_channel.twitch_options.sr.max_sr
+				db_channel.requests.sr.max_sr
 		)
 			return client
 				.say(
 					channel,
-					placeholderParser(
-						db_channel.twitch_options.messages.bad_sr,
-						{
-							min_sr: {
-								regex: /{sr_min}/g,
-								text: db_channel.twitch_options.sr.min_sr.toFixed(
-									2
-								),
-							},
-							max_sr: {
-								regex: /{sr_max}/g,
-								text: db_channel.twitch_options.sr.max_sr.toFixed(
-									2
-								),
-							},
-							separator: {
-								regex: /{separator}/g,
-								text: db_channel.twitch_options.separator,
-							},
-						}
-					)
+					placeholderParser(db_channel.requests.messages.bad_sr, {
+						min_sr: {
+							regex: /{sr_min}/g,
+							text: db_channel.requests.sr.min_sr.toFixed(2),
+						},
+						max_sr: {
+							regex: /{sr_max}/g,
+							text: db_channel.requests.sr.max_sr.toFixed(2),
+						},
+						separator: {
+							regex: /{separator}/g,
+							text: db_channel.requests.separator,
+						},
+					})
 				)
 				.catch((e) => {
 					console.log(e);
@@ -123,18 +116,16 @@ export default async (
 			last_beatmap: beatmap.data.id,
 		});
 
-		if (!db_channel.twitch_options.modes.includes(beatmap.data.mode_int))
+		if (!db_channel.requests.modes.includes(beatmap.data.mode_int))
 			return client
 				.say(
 					channel,
 					placeholderParser(
-						db_channel.twitch_options.messages.invalid_mode,
+						db_channel.requests.messages.invalid_mode,
 						{
 							modes: {
 								regex: /{modes}/g,
-								text: parseModes(
-									db_channel.twitch_options.modes
-								),
+								text: parseModes(db_channel.requests.modes),
 							},
 						}
 					)
@@ -143,18 +134,16 @@ export default async (
 					console.log(e);
 				});
 
-		if (!db_channel.twitch_options.status.includes(beatmap.data.status))
+		if (!db_channel.requests.status.includes(beatmap.data.status))
 			return client
 				.say(
 					channel,
 					placeholderParser(
-						db_channel.twitch_options.messages.invalid_status,
+						db_channel.requests.messages.invalid_status,
 						{
 							modes: {
 								regex: /{beatmap_status}/g,
-								text: db_channel.twitch_options.status.join(
-									", "
-								),
+								text: db_channel.requests.status.join(", "),
 							},
 						}
 					)
@@ -166,7 +155,7 @@ export default async (
 		bancho
 			.getUser(user.data.username)
 			.sendMessage(
-				placeholderParser(db_channel.twitch_options.messages.request, {
+				placeholderParser(db_channel.requests.messages.request, {
 					username: {
 						regex: /{username}/g,
 						text: `${tags["display-name"]}`,
@@ -209,7 +198,7 @@ export default async (
 					},
 					separator: {
 						regex: /{separator}/g,
-						text: db_channel.twitch_options.separator,
+						text: db_channel.requests.separator,
 					},
 					mode: {
 						regex: /{mode}/g,
@@ -228,37 +217,34 @@ export default async (
 		return client
 			.say(
 				channel,
-				placeholderParser(
-					db_channel.twitch_options.messages.confirmation,
-					{
-						beatmap: {
-							regex: /{beatmap}/g,
-							text: `${beatmap.data.beatmapset.artist} - ${
-								beatmap.data.beatmapset.title
-							} [${
-								beatmap.data.version
-							}] (${message.att.starRating.toFixed(2)}★${
-								mods == "NM" ? "" : ` +${mods}`
-							}) ${
-								beatmap.data.mode != "osu"
-									? `<osu!${beatmap.data.mode}>`
-									: ""
-							}`,
-						},
-						separator: {
-							regex: /{separator}/g,
-							text: db_channel.twitch_options.separator,
-						},
-						username: {
-							regex: /{username}/g,
-							text: tags["display-name"],
-						},
-						user: {
-							regex: /{user}/g,
-							text: tags["display-name"],
-						},
-					}
-				)
+				placeholderParser(db_channel.requests.messages.confirmation, {
+					beatmap: {
+						regex: /{beatmap}/g,
+						text: `${beatmap.data.beatmapset.artist} - ${
+							beatmap.data.beatmapset.title
+						} [${
+							beatmap.data.version
+						}] (${message.att.starRating.toFixed(2)}★${
+							mods == "NM" ? "" : ` +${mods}`
+						}) ${
+							beatmap.data.mode != "osu"
+								? `<osu!${beatmap.data.mode}>`
+								: ""
+						}`,
+					},
+					separator: {
+						regex: /{separator}/g,
+						text: db_channel.requests.separator,
+					},
+					username: {
+						regex: /{username}/g,
+						text: tags["display-name"],
+					},
+					user: {
+						regex: /{user}/g,
+						text: tags["display-name"],
+					},
+				})
 			)
 			.catch((e) => {
 				console.log(e);
@@ -284,22 +270,20 @@ export default async (
 
 		beatmap.beatmapset = beatmapset.data;
 
-		const user = await fetchUser(db_channel.id);
+		const user = await fetchUser(db_channel.osu_id);
 
 		if (!user.data) return;
 
-		if (!db_channel.twitch_options.modes.includes(beatmap.mode_int))
+		if (!db_channel.requests.modes.includes(beatmap.mode_int))
 			return client
 				.say(
 					channel,
 					placeholderParser(
-						db_channel.twitch_options.messages.invalid_mode,
+						db_channel.requests.messages.invalid_mode,
 						{
 							modes: {
 								regex: /{modes}/g,
-								text: parseModes(
-									db_channel.twitch_options.modes
-								),
+								text: parseModes(db_channel.requests.modes),
 							},
 						}
 					)
@@ -312,40 +296,38 @@ export default async (
 
 		if (
 			Number(message.att.starRating.toFixed(2)) <
-				db_channel.twitch_options.sr.min_sr ||
+				db_channel.requests.sr.min_sr ||
 			Number(message.att.starRating.toFixed(2)) >
-				db_channel.twitch_options.sr.max_sr
+				db_channel.requests.sr.max_sr
 		)
 			return client.say(
 				channel,
-				placeholderParser(db_channel.twitch_options.messages.bad_sr, {
+				placeholderParser(db_channel.requests.messages.bad_sr, {
 					min_sr: {
 						regex: /{sr_min}/g,
-						text: db_channel.twitch_options.sr.min_sr.toFixed(2),
+						text: db_channel.requests.sr.min_sr.toFixed(2),
 					},
 					max_sr: {
 						regex: /{sr_max}/g,
-						text: db_channel.twitch_options.sr.max_sr.toFixed(2),
+						text: db_channel.requests.sr.max_sr.toFixed(2),
 					},
 					separator: {
 						regex: /{separator}/g,
-						text: db_channel.twitch_options.separator,
+						text: db_channel.requests.separator,
 					},
 				})
 			);
 
-		if (!db_channel.twitch_options.status.includes(beatmap.status))
+		if (!db_channel.requests.status.includes(beatmap.status))
 			return client
 				.say(
 					channel,
 					placeholderParser(
-						db_channel.twitch_options.messages.invalid_status,
+						db_channel.requests.messages.invalid_status,
 						{
 							modes: {
 								regex: /{beatmap_status}/g,
-								text: db_channel.twitch_options.status.join(
-									", "
-								),
+								text: db_channel.requests.status.join(", "),
 							},
 						}
 					)
@@ -359,7 +341,7 @@ export default async (
 		});
 
 		bancho.getUser(user.data.username).sendMessage(
-			placeholderParser(db_channel.twitch_options.messages.request, {
+			placeholderParser(db_channel.requests.messages.request, {
 				username: {
 					regex: /{username}/g,
 					text: `${tags["display-name"]}`,
@@ -402,7 +384,7 @@ export default async (
 				},
 				separator: {
 					regex: /{separator}/g,
-					text: db_channel.twitch_options.separator,
+					text: db_channel.requests.separator,
 				},
 				mode: {
 					regex: /{mode}/g,
@@ -416,37 +398,32 @@ export default async (
 		return client
 			.say(
 				channel,
-				placeholderParser(
-					db_channel.twitch_options.messages.confirmation,
-					{
-						beatmap: {
-							regex: /{beatmap}/g,
-							text: `${beatmap.beatmapset.artist} - ${
-								beatmap.beatmapset.title
-							} [${
-								beatmap.version
-							}] (${message.att.starRating.toFixed(2)}★${
-								mods == "NM" ? "" : ` +${mods}`
-							}) ${
-								beatmap.mode != "osu"
-									? `<osu!${beatmap.mode}>`
-									: ""
-							}`,
-						},
-						separator: {
-							regex: /{separator}/g,
-							text: db_channel.twitch_options.separator,
-						},
-						username: {
-							regex: /{username}/g,
-							text: tags["display-name"],
-						},
-						user: {
-							regex: /{user}/g,
-							text: tags["display-name"],
-						},
-					}
-				)
+				placeholderParser(db_channel.requests.messages.confirmation, {
+					beatmap: {
+						regex: /{beatmap}/g,
+						text: `${beatmap.beatmapset.artist} - ${
+							beatmap.beatmapset.title
+						} [${
+							beatmap.version
+						}] (${message.att.starRating.toFixed(2)}★${
+							mods == "NM" ? "" : ` +${mods}`
+						}) ${
+							beatmap.mode != "osu" ? `<osu!${beatmap.mode}>` : ""
+						}`,
+					},
+					separator: {
+						regex: /{separator}/g,
+						text: db_channel.requests.separator,
+					},
+					username: {
+						regex: /{username}/g,
+						text: tags["display-name"],
+					},
+					user: {
+						regex: /{user}/g,
+						text: tags["display-name"],
+					},
+				})
 			)
 			.catch((e) => {
 				console.log(e);

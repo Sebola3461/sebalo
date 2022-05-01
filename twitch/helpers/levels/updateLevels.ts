@@ -1,11 +1,10 @@
 import { ChatUserstate, Client } from "tmi.js";
-import { twitchUsers, users } from "../../../database";
+import { twitchChannels, twitchUsers, users } from "../../../database";
 import createNewTwitchUser from "../../../database/utils/createNewTwitchUser";
 import getChannelUsers from "../channel/getChannelUsers";
 import calculatePointsFor from "./calculatePointsFor";
 import checkBlacklistedLevel from "./checkBlacklistedLevel";
 import createLevelObjectFor from "./createLevelObjectFor";
-import checkLevelDups from "./checkLevelDups";
 import dotenv, { config } from "dotenv";
 dotenv.config();
 
@@ -24,8 +23,6 @@ export async function updateLevels(
 			`Skipping ${tags.username} in ${channel} cuz it's a bot...`
 		);
 	}
-
-	await checkLevelDups(channel);
 
 	const chat_users = await getChannelUsers(channel.slice(1));
 
@@ -46,18 +43,18 @@ export async function updateLevels(
 		await createLevelObjectFor(tags, channel, message);
 	}
 
-	let streamer = (await users.find()).filter(
-		(u: any) => u.twitch.channel == channel.slice(1)
-	)[0];
+	let streamer = await twitchChannels.findOne({
+		username: channel.slice(1),
+	});
 
 	if (!streamer) return;
 
-	if (streamer.twitch_options.levels_enable == false)
+	if (streamer.levels.enable == false)
 		return console.log(
 			`Skipping ${tags.username} in ${channel} cuz levels are disabled...`
 		);
 
-	if (streamer.twitch_options.blacklist.includes(tags.username)) {
+	if (streamer.requests.blacklist.includes(tags.username)) {
 		console.log(
 			`Skipping ${tags.username} in ${channel} cuz its blacklisted...`
 		);
@@ -68,7 +65,9 @@ export async function updateLevels(
 	}
 
 	// ? Level object index for this channel
-	let level_index = user.levels.findIndex((l: any) => l.channel == channel);
+	let level_index = streamer.levels.users.findIndex(
+		(l: any) => l.user == tags.username
+	);
 
 	// ? Check if the user have a level object in this channel
 	if (level_index == -1) {
@@ -78,7 +77,14 @@ export async function updateLevels(
 		user = await twitchUsers.findById(tags["user-id"]);
 	}
 
-	await calculatePointsFor(client, tags, channel, user, level_index, message);
+	await calculatePointsFor(
+		client,
+		tags,
+		channel,
+		streamer,
+		level_index,
+		message
+	);
 
 	console.log(`Levels for user ${tags.username} in ${channel} updated!`);
 }
