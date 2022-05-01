@@ -1,11 +1,14 @@
 import { ChatUserstate } from "tmi.js";
 import { twitchChannels, twitchUsers } from "../../../database";
+import getChannelInfo from "../api/getChannelInfo";
 
 export default async (
 	user_data: ChatUserstate,
 	channel: string,
 	message: string
 ) => {
+	if (!user_data["user-id"]) return;
+
 	console.log(
 		`Creating level object for ${user_data.username} on ${channel}`
 	);
@@ -21,6 +24,8 @@ export default async (
 		};
 
 	const new_level = {
+		user_id: user_data["user-id"],
+		avatar: (await getChannelInfo(user_data.username || "")).data?.avatar,
 		last_update: new Date(),
 		channel: channel,
 		level: 0,

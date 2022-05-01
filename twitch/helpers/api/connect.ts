@@ -26,29 +26,34 @@ async function connect() {
 
 		process.env.twitch_token = r.data.access_token;
 
-		// (await users.find())
-		// 	.filter((u) => u.twitch.channel != "")
-		// 	.forEach(async (u: any) => {
-		// 		let channel = await twitchChannels.findOne({
-		// 			username: u.twitch.channel,
+		// (await twitchChannels.find()).forEach(async (u: any) => {
+		// 	console.log(
+		// 		`${"Task Running".bgYellow.bgCyan} Atualizando ${u.username}`
+		// 	);
+
+		// 	const levels = u.levels.users;
+
+		// 	for (const level of levels) {
+		// 		const l_user = await twitchUsers.findOne({
+		// 			username: level.user,
 		// 		});
 
-		// 		console.log(
-		// 			`${"Task Running".bgYellow.bgCyan} Migrando levels de ${
-		// 				u._id
-		// 			} para ${channel.username}`
+		// 		if (l_user == null) return;
+
+		// 		const index = levels.findIndex(
+		// 			(l: any) => l.user == l_user.username
 		// 		);
 
-		// 		channel.osu_id = u._id;
+		// 		u.levels.users[index]["avatar"] = l_user.avatar;
+		// 		u.levels.users[index]["user_id"] = l_user._id;
+		// 	}
 
-		// 		await twitchChannels.findByIdAndUpdate(channel._id, channel);
-
-		// 		console.log(
-		// 			`${"Sucesso".bgGreen.black} levels de ${u.username} para ${
-		// 				channel.username
-		// 			} migrados!`
-		// 		);
-		// 	});
+		// 	console.log(
+		// 		`${"Sucesso".bgGreen.black} levels de ${
+		// 			u.username
+		// 		} atualizados!`
+		// 	);
+		// });
 
 		setTimeout(() => {
 			connect();
