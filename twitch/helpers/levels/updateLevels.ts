@@ -50,8 +50,8 @@ export async function updateLevels(
 			`Skipping ${tags.username} in ${channel} cuz levels are disabled...`
 		);
 
-	streamer.levels.users = checkDuplicates(streamer.levels.users);
-	await twitchChannels.findByIdAndUpdate(streamer._id, streamer);
+	// streamer.levels.users = checkDuplicates(streamer.levels.users);
+	// await twitchChannels.findByIdAndUpdate(streamer._id, streamer);
 
 	if (streamer.requests.blacklist.includes(tags.username)) {
 		console.log(
