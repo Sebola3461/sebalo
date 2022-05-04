@@ -26,6 +26,7 @@ export default async (
 	const new_level = {
 		user_id: user_data["user-id"],
 		avatar: (await getChannelInfo(user_data.username || "")).data?.avatar,
+		user: user_data.username,
 		last_update: new Date(),
 		channel: channel,
 		level: 0,
@@ -38,15 +39,28 @@ export default async (
 	// ? If exists, fallback
 	if (
 		db_channel.levels.users.findIndex(
-			(l: any) => l.user == user_data.username
+			(l: any) => l.user_id == user_data["user-id"]
 		) != -1
 	)
 		return db_channel.levels.users.findIndex(
-			(l: any) => l.user == user_data.username
+			(l: any) => l.user_id == user_data["user-id"]
 		);
 
 	// ? Add level object to user
 	db_channel.levels.users.push(new_level);
+	const levels_cache = db_channel.levels.users;
+
+	db_channel.levels.users = [];
+
+	levels_cache.forEach((l: any) => {
+		if (
+			levels_cache.find((l: any) => l.user_id == user_data["user-id"]) !=
+			undefined
+		)
+			return;
+
+		db_channel.levels.users.push(l);
+	});
 
 	await twitchChannels.findOneAndUpdate(
 		{

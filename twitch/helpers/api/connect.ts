@@ -48,6 +48,8 @@ async function connect() {
 		// 		u.levels.users[index]["user_id"] = l_user._id;
 		// 	}
 
+		// 	await twitchChannels.findByIdAndUpdate(u._id, u)
+
 		// 	console.log(
 		// 		`${"Sucesso".bgGreen.black} levels de ${
 		// 			u.username

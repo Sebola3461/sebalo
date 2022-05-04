@@ -6,6 +6,7 @@ import calculatePointsFor from "./calculatePointsFor";
 import checkBlacklistedLevel from "./checkBlacklistedLevel";
 import createLevelObjectFor from "./createLevelObjectFor";
 import dotenv, { config } from "dotenv";
+import checkDuplicates from "./checkDuplicates";
 dotenv.config();
 
 // TODO: Add typing for twitchUsers and users
@@ -24,24 +25,19 @@ export async function updateLevels(
 		);
 	}
 
-	const chat_users = await getChannelUsers(channel.slice(1));
+	// const chat_users = await getChannelUsers(channel.slice(1));
 
-	if (chat_users.chatters.broadcaster.length != 1) {
-		console.log(
-			`Skipping ${tags.username} in ${channel} cuz the streamer is offline...`
-		);
+	// if (chat_users.chatters.broadcaster.length != 1) {
+	// 	console.log(
+	// 		`Skipping ${tags.username} in ${channel} cuz the streamer is offline...`
+	// 	);
 
-		return;
-	}
+	// 	return;
+	// }
 
 	let user = await twitchUsers.findById(tags["user-id"]);
 
-	if (user == null) {
-		user = await createNewTwitchUser(tags);
-
-		if (!user._id) return;
-		await createLevelObjectFor(tags, channel, message);
-	}
+	if (user == null) user = await createNewTwitchUser(tags);
 
 	let streamer = await twitchChannels.findOne({
 		username: channel.slice(1),
@@ -53,6 +49,9 @@ export async function updateLevels(
 		return console.log(
 			`Skipping ${tags.username} in ${channel} cuz levels are disabled...`
 		);
+
+	streamer.levels.users = checkDuplicates(streamer.levels.users);
+	await twitchChannels.findByIdAndUpdate(streamer._id, streamer);
 
 	if (streamer.requests.blacklist.includes(tags.username)) {
 		console.log(
