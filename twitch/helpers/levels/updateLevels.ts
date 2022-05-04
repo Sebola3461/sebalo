@@ -25,15 +25,15 @@ export async function updateLevels(
 		);
 	}
 
-	// const chat_users = await getChannelUsers(channel.slice(1));
+	const chat_users = await getChannelUsers(channel.slice(1));
 
-	// if (chat_users.chatters.broadcaster.length != 1) {
-	// 	console.log(
-	// 		`Skipping ${tags.username} in ${channel} cuz the streamer is offline...`
-	// 	);
+	if (chat_users.chatters.broadcaster.length != 1) {
+		console.log(
+			`Skipping ${tags.username} in ${channel} cuz the streamer is offline...`
+		);
 
-	// 	return;
-	// }
+		return;
+	}
 
 	let user = await twitchUsers.findById(tags["user-id"]);
 
