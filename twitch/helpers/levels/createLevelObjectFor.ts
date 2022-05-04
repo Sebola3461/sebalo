@@ -48,19 +48,6 @@ export default async (
 
 	// ? Add level object to user
 	db_channel.levels.users.push(new_level);
-	const levels_cache = db_channel.levels.users;
-
-	db_channel.levels.users = [];
-
-	levels_cache.forEach((l: any) => {
-		if (
-			levels_cache.find((l: any) => l.user_id == user_data["user-id"]) !=
-			undefined
-		)
-			return;
-
-		db_channel.levels.users.push(l);
-	});
 
 	await twitchChannels.findOneAndUpdate(
 		{
