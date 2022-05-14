@@ -26,36 +26,30 @@ async function connect() {
 
 		process.env.twitch_token = r.data.access_token;
 
-		// (await twitchChannels.find()).forEach(async (u: any) => {
-		// 	console.log(
-		// 		`${"Task Running".bgYellow.bgCyan} Atualizando ${u.username}`
-		// 	);
-
-		// 	const levels = u.levels.users;
-
-		// 	for (const level of levels) {
-		// 		const l_user = await twitchUsers.findOne({
-		// 			username: level.user,
-		// 		});
-
-		// 		if (l_user == null) return;
-
-		// 		const index = levels.findIndex(
-		// 			(l: any) => l.user == l_user.username
+		// (await twitchChannels.find())
+		// 	.filter(
+		// 		(c) =>
+		// 			c.requests.messages.request ==
+		// 			"{username} || {mode} {beatmap_url} ({stars}★{mods}) | {attributes} | {pp100} • {pp99} • {pp98} • {pp95}"
+		// 	)
+		// 	.forEach(async (u: any) => {
+		// 		console.log(
+		// 			`${"Task Running".bgYellow.bgCyan} Atualizando ${
+		// 				u.username
+		// 			}`
 		// 		);
 
-		// 		u.levels.users[index]["avatar"] = l_user.avatar;
-		// 		u.levels.users[index]["user_id"] = l_user._id;
-		// 	}
+		// 		u.requests.messages.request =
+		// 			"{username} || {mode} {beatmap_url}  ({stars}★{mods}) | {attributes} | {pp100} • {pp99} • {pp98} • {pp95}";
 
-		// 	await twitchChannels.findByIdAndUpdate(u._id, u)
+		// 		await twitchChannels.findByIdAndUpdate(u._id, u);
 
-		// 	console.log(
-		// 		`${"Sucesso".bgGreen.black} levels de ${
-		// 			u.username
-		// 		} atualizados!`
-		// 	);
-		// });
+		// 		console.log(
+		// 			`${"Sucesso".bgGreen.black} levels de ${
+		// 				u.username
+		// 			} atualizados!`
+		// 		);
+		// 	});
 
 		setTimeout(() => {
 			connect();
