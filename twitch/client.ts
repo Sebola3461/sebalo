@@ -67,10 +67,10 @@ export async function twitchClient(bancho: BanchoClient) {
 					client
 				);
 
-			await updateLevels(client, tags, channel, message);
-
 			if (message.startsWith("!"))
 				commandHandler(message, tags, channel, bancho, client);
+
+			await updateLevels(client, tags, channel, message);
 		});
 	} catch (e) {
 		console.error(e);
