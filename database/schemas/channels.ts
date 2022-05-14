@@ -76,8 +76,8 @@ export default new Schema({
 			],
 		},
 	},
-	osu: {
-		access_token: "",
-		refresh_token: "",
+	osu_token: {
+		type: String,
+		default: "",
 	},
 });
