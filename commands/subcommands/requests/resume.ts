@@ -1,27 +1,22 @@
 import { PrivateMessage } from "bancho.js";
-import { users } from "../../../database";
+import { twitchChannels, users } from "../../../database";
 
 export default async (pm: PrivateMessage, user: any) => {
-	const db_user = await users.findById(user.id);
+	const db_user = await twitchChannels.findOne({ osu_id: user.id });
 
 	if (!db_user)
 		return pm.user.sendMessage(
-			"You dont exist in my database, wait some seconds and try again."
+			"You don't have a channel linked. Use !twitch link to link a channel"
 		);
 
-	if (db_user.twitch.channel.trim() == "")
+	if (db_user.requests.pause == false)
 		return pm.user.sendMessage(
-			"You need to link your twitch account first. Use !twitch link to link your account."
+			`The requests are already allowed, use !requests resume to resume.`
 		);
 
-	if (db_user.twitch_options.pause == false)
-		return pm.user.sendMessage(
-			`The requests are already allowed, use !requests resume to pause.`
-		);
+	db_user.requests.pause = false;
 
-	db_user.twitch_options.pause = false;
-
-	await users.findByIdAndUpdate(user.id, db_user);
+	await twitchChannels.findOneAndUpdate({ osu_id: user.id });
 
 	return pm.user.sendMessage(`Requests allowed again!`);
 };
