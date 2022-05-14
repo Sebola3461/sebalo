@@ -29,7 +29,7 @@ export default async (
 			? beatmapData.att.mods.acronyms.join("")
 			: "NM";
 
-	const beatmap_url = `[https://osu.ppy.sh/s/${beatmap.id} ${beatmapset.artist} - ${beatmapset.title} [${beatmap.version}]]`;
+	const beatmap_url = `[https://osu.ppy.sh/b/${beatmap.id} ${beatmapset.artist} - ${beatmapset.title} [${beatmap.version}]]`;
 
 	// ? Send the beatmap ingame
 	bancho.sendMessage(
