@@ -13,9 +13,7 @@ export default async (
 		`Creating level object for ${user_data.username} on ${channel}`
 	);
 
-	let db_channel = await twitchChannels.findOne({
-		username: channel.slice(1),
-	});
+	let db_channel = await twitchChannels.findById(user_data["room-id"]);
 
 	if (db_channel == null)
 		return {
@@ -49,12 +47,7 @@ export default async (
 	// ? Add level object to user
 	db_channel.levels.users.push(new_level);
 
-	await twitchChannels.findOneAndUpdate(
-		{
-			username: channel.slice(1),
-		},
-		db_channel
-	);
+	await twitchChannels.findByIdAndUpdate(db_channel._id, db_channel);
 
 	const index = db_channel.levels.users.findIndex(
 		(l: any) => l.user == user_data.username

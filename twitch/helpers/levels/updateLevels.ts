@@ -39,9 +39,7 @@ export async function updateLevels(
 
 	if (user == null) user = await createNewTwitchUser(tags);
 
-	let streamer = await twitchChannels.findOne({
-		username: channel.slice(1),
-	});
+	let streamer = await twitchChannels.findById(tags["room-id"]);
 
 	if (!streamer) return;
 

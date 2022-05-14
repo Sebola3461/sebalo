@@ -3,9 +3,7 @@ import "colors";
 import { twitchChannels } from "../../../database";
 
 export default async (tags: ChatUserstate, channel: string) => {
-	let db_channel = await twitchChannels.findOne({
-		username: channel.slice(1),
-	});
+	let db_channel = await twitchChannels.findById(tags["room-id"]);
 
 	if (db_channel == null) return;
 
@@ -17,12 +15,7 @@ export default async (tags: ChatUserstate, channel: string) => {
 
 	db_channel.levels.users.splice(level, 1);
 
-	await twitchChannels.findOneAndUpdate(
-		{
-			username: channel.slice(1),
-		},
-		db_channel
-	);
+	await twitchChannels.findByIdAndUpdate(db_channel._id, db_channel);
 
 	return void {};
 };

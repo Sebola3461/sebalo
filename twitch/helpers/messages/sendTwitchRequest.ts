@@ -100,10 +100,6 @@ export default async (
 						mods == "NM" ? "" : ` +${mods}`
 					}) ${beatmap.mode != "osu" ? `<osu!${beatmap.mode}>` : ""}`,
 				},
-				separator: {
-					regex: /{separator}/g,
-					text: db_channel.requests.separator,
-				},
 				username: {
 					regex: /{username}/g,
 					text: tags["display-name"],
