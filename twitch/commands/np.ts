@@ -1,6 +1,6 @@
 import { BanchoClient } from "bancho.js";
 import { ChatUserstate, Client } from "tmi.js";
-import { twitchChannels, users } from "../../database";
+import { twitchChannels } from "../../database";
 
 export default async (
 	message: string,
@@ -10,9 +10,7 @@ export default async (
 	client: Client,
 	args: string[]
 ) => {
-	const db_channel = await twitchChannels.findOne({
-		username: channel.slice(1),
-	});
+	const db_channel = await twitchChannels.findById(tags["room-id"]);
 
 	function generateLink(data: {
 		beatmapset_id: number;
