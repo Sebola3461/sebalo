@@ -1,6 +1,9 @@
 import { BanchoClient } from "bancho.js";
 import { ChatUserstate, Client } from "tmi.js";
 import { twitchChannels } from "../../database";
+import fetchBeatmap, {
+	fetchBeatmapset,
+} from "../../helpers/fetcher/fetchBeatmap";
 
 export default async (
 	message: string,
@@ -12,16 +15,38 @@ export default async (
 ) => {
 	const db_channel = await twitchChannels.findById(tags["room-id"]);
 
-	function generateLink(data: {
+	async function generateLink(data: {
 		beatmapset_id: number;
 		beatmap_id: number;
 		title: string;
 		artist: string;
 	}) {
-		if (data.beatmap_id < 0)
-			return `https://osu.ppy.sh/s/${data.beatmapset_id}`;
+		console.log(data);
 
-		return `https://osu.ppy.sh/b/${data.beatmap_id}`;
+		if (data.beatmap_id != -1) {
+			const beatmap = await fetchBeatmap(data.beatmap_id);
+
+			if (
+				beatmap.status != 200 ||
+				!beatmap.data ||
+				!beatmap.data?.beatmapset
+			)
+				return "Beatmap not found!";
+
+			return `${beatmap.data.beatmapset.artist} - ${
+				beatmap.data.beatmapset.title
+			} [${
+				beatmap.data.version
+			}] (${beatmap.data.difficulty_rating.toFixed(
+				2
+			)}★) | https://osu.ppy.sh/b/${data.beatmap_id}`;
+		}
+
+		const beatmap = await fetchBeatmapset(data.beatmapset_id);
+
+		if (beatmap.status != 200 || !beatmap.data) return "Beatmap not found!";
+
+		return `${beatmap.data.artist} - ${beatmap.data.title} | https://osu.ppy.sh/s/${data.beatmapset_id}`;
 	}
 
 	if (!db_channel)
@@ -52,12 +77,7 @@ export default async (
 			});
 
 	return client
-		.say(
-			channel,
-			`${db_channel.now_playing.artist} - ${
-				db_channel.now_playing.title
-			} | ${generateLink(db_channel.now_playing)}`
-		)
+		.say(channel, await generateLink(db_channel.now_playing))
 		.catch((e) => {
 			console.log(e);
 		});
