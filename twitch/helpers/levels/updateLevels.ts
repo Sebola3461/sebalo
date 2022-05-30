@@ -43,7 +43,7 @@ export async function updateLevels(
 
 	if (!streamer) return;
 
-	if (streamer.levels.enable == false)
+	if (!streamer.levels.enable)
 		return console.log(
 			`Skipping ${tags.username} in ${channel} cuz levels are disabled...`
 		);
