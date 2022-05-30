@@ -1,3 +1,4 @@
+import acc from "./acc";
 import help from "./help";
 import requests from "./requests";
 import twitch from "./twitch";
@@ -8,6 +9,7 @@ const commands: any = {
 	help: help,
 	twitch: twitch,
 	requests: requests,
+	acc: acc,
 };
 
 export default commands;

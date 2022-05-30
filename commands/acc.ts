@@ -9,22 +9,32 @@ import calculateCatchBeatmap from "../helpers/performance/calculateCatchBeatmap"
 import calculateManiaBeatmap from "../helpers/performance/calculateManiaBeatmap";
 import calculateStandardBeatmap from "../helpers/performance/calculateStandardBeatmap";
 import calculateTaikoBeatmap from "../helpers/performance/calculateTaikoBeatmap";
-import * as database from "./../database";
+import * as database from "../database";
 
 export default async (pm: PrivateMessage, args: string[], user: any) => {
 	if (user.username == process.env.IRC_USERNAME) return;
 
 	console.log(
-		`${new Date().toLocaleDateString("pt-BR")} | Calculating np !with for ${
+		`${new Date().toLocaleDateString("pt-BR")} | Calculating !acc for ${
 			user.username
 		} (${user.id})`
 	);
 
-	const mods = args[0];
-
-	if (!mods)
+	if (!args[0])
 		return pm.user.sendMessage(
-			"Something is wrong. The correct syntax is [https://osu.ppy.sh/ !with <mods>]"
+			"Invalid syntax! correct is !acc <number> <?mods>"
+		);
+
+	const acc = Number(args[0].replace(",", "."));
+
+	if (acc > 100 || acc < 20)
+		return pm.user.sendMessage("No bro, you can't fc a map with this acc");
+
+	const mods = args[1] != undefined ? args[1].replace(/\+/, "") : "NM";
+
+	if (isNaN(acc))
+		return pm.user.sendMessage(
+			"Invalid syntax! correct is !acc <number> <?mods>"
 		);
 
 	const user_data = await database.users.findById(user.id);
@@ -46,13 +56,17 @@ export default async (pm: PrivateMessage, args: string[], user: any) => {
 
 	switch (map_mode) {
 		case "osu": {
-			performance = await calculateStandardBeatmap(beatmap.data, mods);
+			performance = await calculateStandardBeatmap(beatmap.data, mods, [
+				acc,
+			]);
 
 			calculatePerformance();
 			break;
 		}
 		case "taiko": {
-			performance = await calculateTaikoBeatmap(beatmap.data, mods);
+			performance = await calculateTaikoBeatmap(beatmap.data, mods, [
+				acc,
+			]);
 
 			calculatePerformance();
 
@@ -60,7 +74,9 @@ export default async (pm: PrivateMessage, args: string[], user: any) => {
 		}
 
 		case "fruits": {
-			performance = await calculateCatchBeatmap(beatmap.data, mods);
+			performance = await calculateCatchBeatmap(beatmap.data, mods, [
+				acc,
+			]);
 
 			calculatePerformance();
 
@@ -68,7 +84,9 @@ export default async (pm: PrivateMessage, args: string[], user: any) => {
 		}
 
 		case "mania": {
-			performance = await calculateManiaBeatmap(beatmap.data, mods);
+			performance = await calculateManiaBeatmap(beatmap.data, mods, [
+				acc,
+			]);
 
 			calculatePerformance();
 
@@ -80,14 +98,10 @@ export default async (pm: PrivateMessage, args: string[], user: any) => {
 		performance.forEach(
 			(p: { acc?: number; score?: number; pp: number }, i) => {
 				if (map_mode != "mania") {
-					pps = pps.concat(
-						`${p.acc}%: ${p.pp}pp ${i < 4 ? "•" : ""} `
-					);
+					pps = pps.concat(`${p.acc}%: ${p.pp}pp `);
 				} else {
 					const scores = ["1mi", "900k", "800k", "700k"];
-					pps = pps.concat(
-						`${scores[i]}: ${p.pp}pp ${i < 3 ? "•" : ""} `
-					);
+					pps = pps.concat(`${scores[i]}: ${p.pp}pp  `);
 				}
 			}
 		);
@@ -111,11 +125,6 @@ export default async (pm: PrivateMessage, args: string[], user: any) => {
 		extras = calculateManiaExtras(performance[0].beatmap);
 	}
 
-	if (performance[0].att.mods.acronyms.join("") == "NM")
-		return pm.user.sendMessage(
-			"Invalid mods provided! Press esc -> f1 to see a list of avaliable mods for this gamemode."
-		);
-
 	pm.user.sendMessage(
 		`${beatmap.data.beatmapset?.artist} - ${
 			beatmap.data.beatmapset?.title
@@ -129,7 +138,7 @@ export default async (pm: PrivateMessage, args: string[], user: any) => {
 	);
 
 	console.log(
-		`${new Date().toLocaleDateString("pt-BR")} | Np !with calculated for ${
+		`${new Date().toLocaleDateString("pt-BR")} | !acc calculated for ${
 			user.username
 		} (${user.id})`
 	);

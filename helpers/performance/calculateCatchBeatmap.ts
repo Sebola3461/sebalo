@@ -37,6 +37,7 @@ export default async (beatmap: Beatmap, mods?: string, accs?: number[]) => {
 			nobjects: parsed.hitObjects.length,
 			percent: acc,
 		});
+
 		score.statistics.great = hits.n300;
 		score.statistics.ok = hits.n100;
 		score.statistics.meh = 0;
