@@ -3,6 +3,7 @@ import { ChatUserstate, Client } from "tmi.js";
 import { twitchChannels, twitchUsers, users } from "../../database";
 import disable from "./subcommands/level/disable";
 import enable from "./subcommands/level/enable";
+import { owner_twitch } from "./../../debug.json";
 
 export default async (
 	message: string,
@@ -14,7 +15,10 @@ export default async (
 ) => {
 	switch (args[0]) {
 		case "disable": {
-			if (tags.username == channel.slice(1)) {
+			if (
+				tags.username == channel.slice(1) &&
+				tags["user-id"] != owner_twitch
+			) {
 				disable(message, tags, channel, bancho, client, args);
 
 				break;
@@ -32,7 +36,10 @@ export default async (
 			}
 		}
 		case "enable": {
-			if (tags.username == channel.slice(1)) {
+			if (
+				tags.username == channel.slice(1) &&
+				tags["user-id"] != owner_twitch
+			) {
 				enable(message, tags, channel, bancho, client, args);
 
 				break;

@@ -10,6 +10,7 @@ import setmessage from "./subcommands/requests/setmessage";
 import setmodes from "./subcommands/requests/setmodes";
 import setstatus from "./subcommands/requests/setstatus";
 import statusmsg from "./subcommands/requests/statusmsg";
+import { owner_twitch } from "./../../debug.json";
 
 export default (
 	message: string,
@@ -21,7 +22,10 @@ export default (
 ) => {
 	switch (args[0]) {
 		case "add": {
-			if (tags.username == channel.slice(1)) {
+			if (
+				tags.username == channel.slice(1) &&
+				tags["user-id"] != owner_twitch
+			) {
 				add(message, tags, channel, bancho, client, args);
 
 				break;
@@ -41,7 +45,10 @@ export default (
 			break;
 		}
 		case "remove": {
-			if (tags.username == channel.slice(1)) {
+			if (
+				tags.username == channel.slice(1) &&
+				tags["user-id"] != owner_twitch
+			) {
 				return remove(message, tags, channel, bancho, client, args);
 			} else {
 				return client
