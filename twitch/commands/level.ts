@@ -15,10 +15,7 @@ export default async (
 ) => {
 	switch (args[0]) {
 		case "disable": {
-			if (
-				tags.username == channel.slice(1) &&
-				tags["user-id"] != owner_twitch
-			) {
+			if (tags.username == channel.slice(1)) {
 				disable(message, tags, channel, bancho, client, args);
 
 				break;
@@ -36,10 +33,7 @@ export default async (
 			}
 		}
 		case "enable": {
-			if (
-				tags.username == channel.slice(1) &&
-				tags["user-id"] != owner_twitch
-			) {
+			if (tags.username == channel.slice(1)) {
 				enable(message, tags, channel, bancho, client, args);
 
 				break;
