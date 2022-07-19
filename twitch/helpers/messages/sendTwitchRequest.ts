@@ -14,6 +14,7 @@ export default async (
 		pps: any;
 		metadata: string;
 		att: any;
+		beatmap: any;
 		extras: string;
 	},
 	db_channel: any
@@ -30,6 +31,18 @@ export default async (
 			: "NM";
 
 	const beatmap_url = `[https://osu.ppy.sh/b/${beatmap.id} ${beatmapset.artist} - ${beatmapset.title} [${beatmap.version}]]`;
+
+	function getBPM() {
+		if (
+			Math.round(beatmapData.beatmap.bpmMin) ==
+			Math.round(beatmapData.beatmap.bpmMax)
+		)
+			return `${Math.round(beatmapData.beatmap.bpmMax)} BPM`;
+
+		return `${Math.round(beatmapData.beatmap.bpmMin)} BPM - ${Math.round(
+			beatmapData.beatmap.bpmMax
+		)} BPM`;
+	}
 
 	// ? Send the beatmap ingame
 	bancho.sendMessage(
@@ -73,6 +86,10 @@ export default async (
 			pp95: {
 				regex: /{pp95}/g,
 				text: `${beatmapData.pps.pp95}pp`,
+			},
+			bpm: {
+				regex: /{bpm}/g,
+				text: `${getBPM()}`,
 			},
 			separator: {
 				regex: /{separator}/g,

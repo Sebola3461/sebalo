@@ -2,8 +2,6 @@ import { Beatmap } from "../../types/beatmap";
 import axios from "axios";
 import { BeatmapDecoder } from "osu-parsers";
 import { ManiaRuleset } from "osu-mania-stable";
-import { ScoreInfo, BeatmapInfo } from "osu-classes";
-import Accuracy from "./Accuracy";
 
 export default async (beatmap: Beatmap, mods?: string, _scores?: number[]) => {
 	const osu_file = await axios(`https://osu.ppy.sh/osu/${beatmap.id}`);

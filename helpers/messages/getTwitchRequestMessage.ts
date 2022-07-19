@@ -100,6 +100,7 @@ export default async (beatmap: Beatmap, mods: string, with_url?: boolean) => {
 		pps: pps,
 		metadata: metadata,
 		att: performance[0].att,
+		beatmap: performance[0].beatmap,
 		extras: extras,
 	};
 };

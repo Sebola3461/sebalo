@@ -93,9 +93,23 @@ export default async (beatmap: Beatmap, mods: string, with_url?: boolean) => {
 		? `[https://osu.ppy.sh/b/${beatmap.id} ${beatmap.beatmapset?.artist} - ${beatmap.beatmapset?.title} [${beatmap.version}]]`
 		: `${beatmap.beatmapset?.artist} - ${beatmap.beatmapset?.title} [${beatmap.version}]`;
 
+	function getBPM() {
+		if (
+			Math.round(performance[0].beatmap.bpmMin) ==
+			Math.round(performance[0].beatmap.bpmMax)
+		)
+			return `${Math.round(performance[0].beatmap.bpmMax)} BPM`;
+
+		return `${Math.round(performance[0].beatmap.bpmMin)} - ${Math.round(
+			performance[0].beatmap.bpmMax
+		)}`;
+	}
+
 	return `${metadata} (${
 		mods == "NM"
 			? beatmap.difficulty_rating.toFixed(2)
 			: performance[0].att.starRating.toFixed(2)
-	}★${mods == "NM" ? "" : ` +${mods}`})  |  ${extras}  |  ${pps}`;
+	}★${
+		mods == "NM" ? "" : ` +${mods}`
+	} [${getBPM()}])  |  ${extras}  |  ${pps}`;
 };
