@@ -19,7 +19,7 @@ export async function updateLevels(
 	if (tags.username == process.env.TWITCH_LOGIN) return;
 	console.log(`Updating levels for user ${tags.username} in ${channel}...`);
 
-	if (!tags["user-id"]) {
+	if (!tags["user-id"] || tags.username == process.env.TWITCH_LOGIN) {
 		return console.log(
 			`Skipping ${tags.username} in ${channel} cuz it's a bot...`
 		);
