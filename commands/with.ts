@@ -29,6 +29,8 @@ export default async (pm: PrivateMessage, args: string[], user: any) => {
 
 	const user_data = await database.users.findById(user.id);
 
+	if (!user_data) return;
+
 	if (user_data.last_beatmap == "")
 		return pm.user.sendMessage("Use /np before use this command!");
 
