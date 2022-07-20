@@ -38,19 +38,13 @@ export default async (beatmap: Beatmap, mods?: string, accs?: number[]) => {
 			percent: acc,
 		});
 
-		score.statistics.great = hits.n300;
-		score.statistics.ok = hits.n100;
-		score.statistics.meh = hits.n50;
-		score.statistics.miss = 0;
+		score.count300 = hits.n300;
+		score.count100 = hits.n100;
+		score.countMiss = 0;
 
 		score.accuracy =
-			(score.statistics.great +
-				score.statistics.ok / 3 +
-				score.statistics.meh / 6) /
-			(score.statistics.great +
-				score.statistics.ok +
-				score.statistics.meh +
-				score.statistics.miss);
+			(score.count300 + score.count100 / 2) /
+			(score.count300 + score.count100 + score.countMiss);
 
 		const performanceCalculator = ruleset.createPerformanceCalculator(
 			DifficultyAttributes,

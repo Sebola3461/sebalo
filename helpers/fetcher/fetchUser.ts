@@ -6,13 +6,14 @@ import { UserResponse } from "../../types/user";
 export async function fetchUserScores(
 	user_id: string | number,
 	type: "best" | "first" | "recent",
-	mode?: GameModeName
+	fails: 0 | 1,
+	mode?: string | undefined
 ): Promise<ScoreResponse> {
 	try {
 		const stringified_id = String(user_id);
 
 		const request = await axios(
-			`https://osu.ppy.sh/api/v2/users/${stringified_id}/scores/${type}?limit=100${
+			`https://osu.ppy.sh/api/v2/users/${stringified_id}/scores/${type}?limit=100&include_fails=${fails}${
 				mode ? `&mode=${mode}` : ""
 			}`,
 			{

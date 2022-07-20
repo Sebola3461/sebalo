@@ -100,9 +100,9 @@ export default async (beatmap: Beatmap, mods: string, with_url?: boolean) => {
 		)
 			return `${Math.round(performance[0].beatmap.bpmMax)} BPM`;
 
-		return `${Math.round(performance[0].beatmap.bpmMin)} - ${Math.round(
+		return `${Math.round(performance[0].beatmap.bpmMin)} BPM - ${Math.round(
 			performance[0].beatmap.bpmMax
-		)}`;
+		)} BPM`;
 	}
 
 	return `${metadata} (${
