@@ -12,7 +12,7 @@ export default async (
 	return client
 		.say(
 			channel,
-			`Check level leaderboards here: https://sebola-web.herokuapp.com/levels/${channel.slice(
+			`Check level leaderboards here: https://sebalo.ppy.tn/levels/${channel.slice(
 				1
 			)}`
 		)
